@@ -1,0 +1,122 @@
+OpForge v0.12 — Structural-Diversity Atlas Expansion + Real Unknown-Structure Challenge
+Date: 2026-08-15
+
+Scope and controls
+------------------
+Unknown-structure engine baseline remains v0.11-unknown-structure-baseline.
+AI=disabled; target=none; Atlas=frozen during discovery; no GPU, Lean, literature search,
+external novelty search, or automatic accepted-Atlas mutation.
+
+Atlas v0.12
+-----------
+Operators: 98
+Spaces/object families: 47
+Relations: 98
+Identities: 48 (semantic duplicates removed during load)
+Verified facts: 98; unverified facts: 0
+Domains: 12
+Structure kinds: 29
+Relation kinds: 18
+Assumption regimes: 29
+Independent domain realizations: 12
+Continuous operators: 48
+Discrete operators: 19
+Continuous/discrete bridges: 17
+Structurally isolated operators: 30
+Relation density: 1.00 relation/operator
+Identity density: 0.49 identity/operator
+
+Domain coverage: algebraic=yes, geometric=yes, spectral=yes, variational=yes, discrete=yes.
+Expansion modules: differential geometry, operator algebra, functional analysis, spectral,
+variational, advanced discrete, form spaces, and v0.12 cross-domain bridges.
+
+Atlas audit v3
+--------------
+Issues: 0
+invalid_space_operator_compatibility=0
+impossible_variance=0
+degree_mismatches=0
+inconsistent_adjoint_pairs=0
+inconsistent_bridge_direction=0
+accidental_analogue_equivalence=0
+unsupported_infinite_dimensional_claims=0
+duplicate_semantic_facts=0
+circular_generalization=0
+
+Known-structure regression
+--------------------------
+v0.10 known-structure predictive suite: 5 cases, 4 successful out-of-sample
+predictions, 1 false-chain/structure rejection, DAG acyclic, leakage-free.
+All C++ regression tests passed: 1/1 CTest.
+
+Synthetic unknown-structure validation
+--------------------------------------
+v0.11 stress suite: 14 cases, 11 predictions, 11 successes.
+Development: 5 cases; validation: 5 cases; held-out: 4 cases.
+Held-out commutation fixtures: 3/3 successes; near-miss rejections: 1.
+Role-renaming and hidden-domain-label checks passed.
+Ablation: pattern-only=0/0, known-axiomatic=4/4, unknown-structure=3/3,
+unknown prediction precision=1.0.
+
+Harder unseen benchmark
+-----------------------
+Fixture: harder-3role-closure.
+Structure absent from accepted Atlas; 3 abstract roles; 2 candidate axioms;
+one simpler competing hypothesis; held-out realization; near-miss control.
+Minimal axiom set: yes. Competing simpler hypothesis rejected: yes.
+Held-out predictions: 2/2. Held-out realization: success. Near-miss rejected: yes.
+
+Real Atlas unknown-structure challenge
+--------------------------------------
+Known structures recognized: 5
+Structural residuals: 1
+Real unknown hypotheses generated: 0 strong, 0 external-check candidates
+Hidden real split: visible=46, withheld=2, prediction attempts=2, successes=0
+Out-of-domain challenge: attempts=1, successes=0
+Under-specified leads: total=36, resolved=0, unknown evidence=5,
+rejected=31, prediction-generating=0.
+
+Independent campaigns
+---------------------
+Five frozen campaigns were executed:
+residual_first, cross_domain_first, prediction_first, falsification_first,
+compression_first.
+Each ran one bounded cycle with 11 actions; no campaign mutated accepted Atlas.
+Prediction serialization preceded reveal; consensus was not treated as novelty evidence.
+
+Atlas A/B ablation
+------------------
+Atlas A (v0.11 seed): 12 operators, 0 relations, 0 unknown hypotheses.
+Atlas B (expanded v0.12): 98 operators, 98 relations, 1 residual, 0 real unknown hypotheses.
+Conclusion: expansion supplies a denser cross-domain search surface, but did not force
+a real unknown hypothesis.
+
+Compute and pruning accounting
+------------------------------
+Active hypothesis peak: 1
+Axiom candidates pruned: 1
+Derivations pruned: 0
+Validation experiments: 10
+Atlas load/pattern/recognition paths completed on CPU; no GPU escalation was needed.
+Typed pruning and bounded campaign budgets remained active.
+
+Scientific answers
+------------------
+A. Did diversity expansion materially improve real unknown discovery? No strong real
+unknown hypothesis appeared; it improved the search surface and exposed the next limit.
+B. Are independent realizations available more often? Yes in the Atlas representation,
+with 12 domain realizations and 17 continuous/discrete bridges; this did not yet yield
+a real external-check candidate.
+C. Were withheld real relations predicted? No: 0/2.
+D. Was an out-of-domain realization predicted? No: 0/1.
+E. Did expansion merely encode all unknowns as known? No evidence of saturation was
+accepted as discovery; residual accounting remained nonzero and unknown hypotheses
+stayed outside accepted Atlas.
+F. Is any result ready for external novelty checking? No. External-check candidates=0.
+
+Conclusion
+----------
+v0.12 succeeds as a controlled Atlas-expansion milestone: semantic domain diversity,
+typed bridges, audit coverage, synthetic unknown validation, real withholding, and
+ablation are now present. The real scientific bottleneck remains induction of a
+strong, prospective, cross-domain structure from the richer Atlas.

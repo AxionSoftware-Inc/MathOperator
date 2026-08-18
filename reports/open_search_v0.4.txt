@@ -1,0 +1,73 @@
+OpForge v0.4 — Meta-Pattern Discovery + Residual-Driven Synthesis
+
+Campaign ID: C-v0.4-blind
+Atlas snapshot: v0.4-meta-residual
+Mode: structural_exploration
+AI: disabled
+Target: none
+Atlas frozen: yes
+Cycles: 4
+Actions executed: 46
+
+Base patterns: 287
+Meta-pattern families: 6
+Predicted roles: 32
+Cross-domain patterns: 10
+Structural gaps: 41
+Candidates generated: 169
+Candidates rejected: 43
+Known-equivalent: 8
+Known constructions: 8
+Counterexamples found: 0
+Numerical experiments: 30
+Surviving candidates: 4
+Serious candidates: 0
+False-interest cases: 49
+Failure patterns: 21
+Residual clusters: 15
+Correction attempts: 59
+Successful repairs: 1
+Epistemic status: structural_exploration_only
+
+Meta-pattern layer
+------------------
+Pattern reports are converted into first-class PatternObject records with abstract signatures, role graphs, assumptions, identities, concrete realizations, domains, and failure modes. The run found six bounded families:
+
+- composition_chain — 12 independent realizations;
+- continuous_or_discrete_analogue — 5 independent realizations;
+- differential_complex_candidate — 3 independent realizations;
+- missing_link_candidate — 5 independent realizations;
+- two-step complex law (`next ∘ previous = 0`) — 4 independent realizations;
+- operator_family — 6 independent realizations.
+
+The family score combines independent-domain count, concrete realizations, assumption generality, and structural compression. Generic graph gaps are not promoted to predictions; predictions are emitted only from reusable complex or continuous/discrete meta-laws. The campaign produced 32 justified predicted-role records with confidence reasons and expected identities/assumptions.
+
+Residual layer
+--------------
+Oracle failures now create first-class ResidualObject records containing domain, codomain, object kind, order, locality, dimension/metric/boundary/regularity/discretization dependence, convergence status, canonical form, and cluster key. Canonicalization ignores formatting and groups residuals by typed regime signature. The run formed 15 residual clusters and derived correction requirements such as boundary conditions, regularity-aware terms, and compatible discrete realizations.
+
+Goal-directed synthesis
+-----------------------
+The grammar is activated by an explicit goal rather than by unrestricted enumeration. Supported justified rules include adjoint, projection/inclusion, weighted linear combination, and correction term. Across four cycles, 59 unique correction attempts were retained after canonical deduplication; the ordinary composition count stayed at 169. No ordinary valid composition became a serious candidate.
+
+Residual-driven benchmark
+-------------------------
+Scenario: projection identity under a changed inner-product regime.
+
+Trace:
+
+candidate → property failure
+failure → typed residual object
+residual → correction requirements
+correction requirement → weighted linear combination
+corrected identity retest → passed
+
+The benchmark recovered a non-trivial projection correction from the typed projection family. This is a benchmark repair result, not a claim of new mathematics.
+
+Previous v0.3 leads
+-------------------
+The four prior surviving leads remain non-serious. Three are numerically supported only in the current finite-difference R3 regime and carry boundary/regularity/dimension uncertainty. One has an unsupported non-grid signature. Residual records and meta-pattern links are retained in the campaign dossier for follow-up; none is promoted merely because it survived numerical stress.
+
+Conclusion
+----------
+v0.4 moves the engine from composition discovery toward structural-law discovery and failure-driven synthesis while keeping AI disabled, the Atlas frozen, and candidate growth bounded. Formal proof, richer property execution, and real geometry/boundary backends remain future work.

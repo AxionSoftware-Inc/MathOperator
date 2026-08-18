@@ -1,0 +1,45 @@
+OpForge v0.7 — Geometry-Aware Ontology + Strong Counterexample Backend
+
+Scope
+  AI: disabled
+  Atlas: frozen during campaign
+  Backend: CPU; GPU boundary remains optional and unimplemented
+  Campaign budget: bounded cycles/actions/experiments/runtime
+
+Implemented
+  - GeometryRegime is a first-class catalog object with metric, orientation,
+    curvature/connection, coordinate, boundary and regularity metadata.
+  - Conditional bridges cover continuous/discrete, vector-calculus/forms and
+    geometry changes without treating them as unconditional equivalences.
+  - Geometry requirements now participate in typed composition and semantic
+    family/equivalence checks.
+  - Deterministic polynomial, trigonometric, bump, smooth-basis and
+    boundary-sensitive field families are available to the adversarial layer.
+  - Curvature and perturbation oracles were added; the legacy five-oracle API
+    remains compatible and run_all_strong exposes all seven checks.
+  - Numerical evidence includes max/L2/relative norms, direct-vs-composed
+    execution, interior/boundary distinction and multi-resolution convergence.
+
+Observed bounded campaign result
+  - Geometry regimes: 7
+  - Conditional bridges: 18
+  - Oracle regime checks: 12 supported / 14 tested
+  - Strong oracle results: 7 per candidate in the campaign
+  - Independent Laplacian interior relative discrepancy: 0.0640622
+  - Hard geometry stress: 3/3 recovered; precision 1.0; recall 1.0;
+    F1 1.0; leakage 0
+  - Unsupported regimes reported explicitly: lorentzian, graph
+  - Candidate explosion: no new synthesis grammar was introduced
+
+Validation
+  - ctest: 1/1 passed
+  - atlas audit: issues=0, contradictory=0, missing assumptions=0,
+    duplicate relations=0, bridge type mismatches=0
+  - atlas validate: 59 operators, 28 spaces, 0 issues
+
+Remaining limitations
+  - Curved differential kernels are classified and stress-tested as regimes,
+    but a full tensor/connection numerical implementation is still pending.
+  - Boundary conditions are represented and targeted; a full PDE boundary
+    solver is not part of v0.7.
+  - Lean integration and GPU execution remain future layers.

@@ -1,0 +1,88 @@
+OpForge v0.11 — Unknown Structure Induction + Predictive Generalization
+
+Baseline and controls
+  Frozen baseline: v0.11-unknown-structure-baseline
+  AI: disabled
+  GPU: not implemented
+  Lean: not integrated
+  Literature search: not performed
+  Accepted MathematicalStructure catalog: never mutated by unknown hypotheses
+
+v0.10 stress test
+  Benchmark separation: development=5, validation=5, held_out=4
+  Total cases: 14
+  Total prospective predictions: 11
+  Total successes: 11
+  Held-out manifest hash: a02e3bba19a15c0d
+  Held-out predictions: 3/3
+  Held-out near-miss rejections: 1
+  All held-out inputs were hashed before evaluation.
+
+Unknown-structure synthetic benchmark
+  The hidden structure was not included in the accepted structure catalog.
+  Runtime-visible fixtures used opaque identifiers and typed endomorphism roles;
+  structure labels, axiom names and expected-output strings were not supplied.
+  Induced law: a commutation relation for a related typed pair.
+  Minimal axiom set: 1 axiom, independent after leave-one-axiom-out testing.
+  Hold-one-relation predictions: 3/3
+  Hold-one-realization predictions: 3/3
+  Role-renaming invariance: passed on all positive cases
+  Domain-label hiding: enabled
+  Near-miss case: rejected after contradicting the induced axiom
+  Synthetic result: strong structural hypothesis for the controlled fixture;
+  this is not a claim of mathematical novelty.
+
+Ablation
+  Pattern/meta-only: 0/0 predictions
+  Known axiomatic reasoning: 4/4 validation predictions
+  Unknown-structure induction: 3/3 held-out predictions, precision=1.0
+  Conclusion: v0.11 adds measurable capability on benchmarks whose structure
+  is intentionally absent from the accepted structure catalog.
+
+Real frozen Atlas campaign
+  Mode: unknown_structure_discovery
+  Campaigns: 4 independent deterministic campaigns
+  Strategies: structure_residual_first, prediction_first, falsification_first,
+  compression_first
+  Cycles per campaign: 7
+  Actions per campaign: 77
+  Known structures recognized: 5
+  Structural residuals: 1
+  Unknown hypotheses generated from the real Atlas: 0
+  Strong structural hypotheses from the real Atlas: 0
+  External-check candidates: 0
+  The real residual did not meet the two-observation, compression and
+  non-known-equivalent induction gate for an unknown structure.
+
+Lead re-analysis
+  v0.10 under-specified leads revisited: 28
+  Resolved: 0
+  Unknown-structure evidence: 5
+  Rejected/explained without unknown prediction: 23
+  Prediction-generating real-Atlas leads: 0
+
+Compute and falsification discipline
+  Peak active hypotheses: 1
+  Axiom candidates pruned: 1
+  Derivations pruned: 0
+  Validation experiments: 6
+  Unknown hypotheses remained bounded and deterministic.
+  Predictions were serialized before target reveal; leakage-free checks passed.
+
+Scientific answers
+  A. Can OpForge induce an abstraction whose axioms were not pre-registered?
+     Yes, on the controlled unseen-structure benchmark.
+  B. Can the induced abstraction predict withheld facts? Yes, 3/3 relation and
+     realization hold-outs succeeded.
+  C. Can near-miss coincidence be rejected? Yes, the contradictory fixture was
+     rejected rather than absorbed by an ad-hoc axiom.
+  D. Does unknown induction add capability? Yes on the unseen-structure
+     ablation; it does not outperform known reasoning on already-known cases.
+  E. Can it find independent real-Atlas realizations of its own unknown law?
+     No such real-Atlas hypothesis was generated in this bounded run.
+  F. Is any real-Atlas result ready for external novelty checking? No.
+
+Validation
+  - ctest: 1/1 passed
+  - Atlas audit: 0 issues
+  - Atlas validate: 59 operators, 28 spaces, 0 issues

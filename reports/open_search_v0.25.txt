@@ -1,0 +1,77 @@
+OpForge — First Open-Ended Structural Exploration
+
+Campaign ID: C-open-final
+Atlas snapshot: v0.25-open-search-baseline
+Mode: structural_exploration
+AI: disabled
+Target: none
+Atlas frozen: yes
+
+Budget
+- cycles: 4
+- actions executed: 26 / 40
+- experiments: 30 / 80
+- runtime bound: 5000 ms
+
+Discovery summary
+- patterns discovered: 287
+- cross-domain patterns: 10
+- structural gaps: 41
+- candidates generated: 170
+- candidates rejected: 42
+- false-interest cases: 48
+- counterexamples found: 0
+- numerical experiments: 30
+- surviving candidates: 4
+- unresolved questions: 3
+
+Top candidate dossiers
+
+1. C-676eb65789f95337
+   category: new composition candidate
+   signature: scalar.r3 -> vector.r3, order=3, linear, local
+   construction: gradient ∘ Laplacian
+   source pattern: P-174
+   numerical status: pass at resolutions 8, 16, 32
+   epistemic status: numerically_supported_multiresolution
+   limitation: no domain-specific property oracle, counterexample search, baseline comparison, or formal proof
+
+2. C-77191e34a98cc385
+   category: new composition candidate
+   signature: scalar.r3 -> matrix.r3, order=2, linear, local
+   construction: Jacobian ∘ gradient
+   source pattern: P-172
+   numerical status: pass at resolutions 8, 16, 32
+   epistemic status: numerically_supported_multiresolution
+   limitation: no domain-specific property oracle, counterexample search, baseline comparison, or formal proof
+
+3. C-41373f78a02dd4c8
+   category: new composition candidate
+   signature: vector.r3 -> vector.r3, order=2, linear, local
+   construction: Gradient ∘ Divergence
+   source pattern: P-166
+   numerical status: pass at resolutions 8, 16, 32
+   epistemic status: numerically_supported_multiresolution
+   limitation: no domain-specific property oracle, counterexample search, baseline comparison, or formal proof
+
+4. C-51415e6e968a29
+   category: new composition candidate
+   signature: vector.r3 -> scalar.r3, order=3, linear, local
+   construction: Laplacian ∘ Divergence
+   source pattern: P-168
+   numerical status: pass at resolutions 8, 16, 32
+   epistemic status: numerically_supported_multiresolution
+   limitation: no domain-specific property oracle, counterexample search, baseline comparison, or formal proof
+
+False-interest control
+- known zero/identity wrappers and unsupported numerical abstractions were separated from surviving candidates;
+- historical div ∘ grad -> Laplacian recovery was not counted as a new operator candidate;
+- no literature novelty claim is made.
+
+Epistemic conclusion
+The engine did more than enumerate formulas: it inferred typed composition chains, cross-domain bridge matches, terminal structural gaps, and a differential-complex abstraction from Atlas structure. However, the surviving candidates are still Atlas-derived compositions, not claims of new mathematics. Their current status is structurally distinct and numerically supported under the finite-difference backend, pending domain-specific identities and counterexample oracles.
+
+Unresolved questions
+- Which surviving compositions have nontrivial identities beyond their construction lineage?
+- Which candidates remain valid under boundary, regularity, and geometry edge cases?
+- Which candidates have a meaningful baseline for performance or equivalence comparison?

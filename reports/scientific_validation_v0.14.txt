@@ -1,0 +1,161 @@
+OpForge v0.14 — Structural Analogy + Constraint Transfer Reasoning
+Scientific validation report
+
+Date: 2026-08-15
+Baseline: v0.14-structural-analogy-baseline
+AI: disabled
+GPU/CUDA: disabled
+Lean: disabled, integration boundary preserved
+Literature search: disabled
+Atlas mutation: disabled; v0.13 Atlas treated as frozen
+External novelty checking: not performed
+
+1. Scope and architectural result
+
+The v0.14 layer is implemented as a separate analogy module rather than being
+folded into the Atlas or the existing discovery engines:
+
+- include/opforge/analogy/engine.hpp
+- src/analogy/engine.cpp
+- src/cli/main.cpp
+
+The module introduces first-class StructuralAnalogy, RoleMapping,
+TransferredConstraint, TransferResidual, AnalogicalPrediction,
+AnalogyBenchmarkCase, agenda, and A/B/C/D ablation objects. The Atlas remains
+the source of typed mathematical facts; analogy reasoning consumes a frozen
+Atlas snapshot and cannot silently add facts to it.
+
+2. Atlas freeze and integrity
+
+Full v0.13 Atlas:
+
+- operators: 98
+- spaces: 47
+- relations: 119
+- identities: 60
+- verified facts: 98; unverified facts: 0
+- Atlas v3 audit issues: 0
+- invalid space/operator compatibility: 0
+- impossible variance: 0
+- degree mismatches: 0
+- inconsistent adjoint pairs: 0
+- inconsistent bridge direction: 0
+- duplicate semantic facts: 0
+- circular generalization: 0
+
+The A/B/C/D run loads the v0.12 view by excluding
+atlas/semantic_densification_v013.json, so B and C are not aliases of the same
+snapshot.
+
+3. Structural analogy discovery
+
+- candidates: 48
+- validated structural analogies: 21
+- partial analogies: 27
+- rejected candidates in the bounded candidate list: 0
+- evaluated mappings: 48
+- theoretical mapping budget: 384
+- pruned mapping alternatives: 336
+- transferred constraints: 268
+- analogical predictions: 93
+- transfer residuals: 2
+
+Mappings are typed and topology-aware. Names and symbols are not used as the
+matching signal. Mapping evidence includes input/output object kind,
+differential order, linearity, locality, continuous/discrete regime, required
+structures, and relation degree. Competing target roles are retained for
+ambiguity analysis.
+
+The absence of rejected records in the bounded top-48 list is not treated as a
+success claim: source-specific assumptions are rejected during transfer, and
+negative controls are reported separately.
+
+4. Constraint transfer and negative transfer
+
+The engine transfers only typed role constraints, relation topology, and
+composition arity by default. Source-only assumptions are marked
+source_specific rather than copied into the target.
+
+Negative-transfer benchmark:
+
+- case: negative-transfer-metric-mismatch
+- source: source_geometry
+- target: target_geometry
+- mismatch: source requires metric; target has no metric
+- result: rejected
+- residual: target metric or a correction is required
+- negative transfers blocked: 1
+
+This is a falsification result: a high-level role match is not sufficient to
+authorize a law transfer.
+
+5. Prediction-before-reveal benchmark
+
+Total benchmark cases: 13
+
+- cross_domain_structural: 8 cases, including 1 internal prospective success
+- continuous_discrete: 4 cases
+- negative_transfer: 1 case
+- direct bridge leakage failures: 0
+- leakage-free cases: 13
+
+For the bridge cases, direct cross-domain relations were hidden before
+discovery. The hidden relation was serialized as the prediction target before
+the reveal. The engine did not reconstruct those hidden bridges in the
+bounded run; these are recorded as honest misses, not converted into success.
+
+The one internal success is a controlled prospective analogy result. It is not
+an external mathematical novelty claim.
+
+6. A/B/C/D ablation
+
+- A — v0.11 seed: 0 successes
+- B — v0.12 Atlas: 1 success
+- C — v0.13 dense + closure foundation: 1 success
+- D — v0.13 dense + closure + analogy reasoning: 1 success
+
+Conclusion: analogy reasoning did not improve first-pass prediction in this
+bounded benchmark. Its demonstrated value is constraint auditing, negative
+transfer blocking, residual generation, and explicit explanation of why a
+candidate was not accepted.
+
+7. Residuals, contradictions, and revisits
+
+- contradiction candidates: 40
+- contradictions explained by existing closure evidence: 38
+- isolated operators: 25
+- isolated operators linked by analogy evidence: 23
+- under-specified leads: 32
+- under-specified leads resolved: 0
+
+The residuals and unresolved leads remain visible for the next research
+campaign. They are not promoted to verified Atlas facts.
+
+8. Scientific interpretation
+
+The v0.14 implementation establishes a reproducible internal structural-
+analogy and constraint-transfer layer over the frozen v0.13 Atlas. It finds
+typed analogies, transfers only justified constraints, hides direct bridges in
+benchmarks, records negative transfer, and preserves residual evidence.
+
+Scientific answer: one prospective cross-domain analogical prediction
+succeeded internally; external checking remains gated. No novelty claim is
+justified by this run.
+
+9. Verification command and result
+
+Command:
+
+  cmake --build build -j2 && ctest --test-dir build --output-on-failure
+
+Result: 1/1 tests passed.
+
+Runtime command:
+
+  ./build/opforge discover --atlas atlas \
+    --mode structural_analogy_discovery \
+    --report reports/scientific_validation_v0.14_runtime.txt
+
+The runtime report contains the deterministic text summary and compact JSON
+export. The implementation deliberately keeps AI, GPU, Lean, literature
+search, and GUI integrations disabled at this milestone.

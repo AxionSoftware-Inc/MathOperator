@@ -1,0 +1,82 @@
+OpForge v0.6 — Scientific Stress Test + Discovery Lead Deep Evaluation
+
+Baseline snapshot: v0.6-scientific-baseline
+Baseline digest: d75b10170ec0be20
+Atlas: 59 operators, 28 spaces, 72 relations, 46 identities
+AI: disabled
+Atlas frozen: yes
+
+Lead evaluation
+---------------
+v0.5 discovery leads evaluated: 14
+Strongly supported leads: 0
+Eliminated leads: 14
+Unresolved leads: 0
+Serious candidates: 0
+
+All 14 leads received a LeadDossier containing formal object, lineage, supporting patterns/meta-patterns, assumptions, domains, compression, prediction, semantic status, counterexample attempts, numerical stress, failed regimes, validity region, alternative explanations, and next decisive experiments. Three factorization leads were downgraded to known constructions. Eleven parameterized-family leads remain under-specified because parameter identities and independent realizations are not yet available.
+
+Every dossier records a reversible outcome history, for example:
+
+    discovery_lead → adversarially_tested → known_construction
+    discovery_lead → adversarially_tested → under_specified
+
+Falsification coverage: 5 oracle checks per lead, 5 counterexample attempts per lead, 3 numerical resolutions per lead, 2 independent-representation checks per lead, 3 rewrite checks per lead, and 4 metamorphic checks per lead. Mean falsification strength: 0.6.
+
+Benchmark suite
+---------------
+12 benchmark runs: four classes × easy/medium/hard.
+
+- Hidden operator recovery: easy structural recovery, medium partial, hard missed.
+- Hidden higher-level schema: easy structural recovery, medium partial, hard missed.
+- Hidden correction law: easy structural recovery, medium partial, hard missed; controlled repair succeeded in easy/medium.
+- Hidden structural bridge: easy structural recovery, medium partial, hard missed.
+
+Metrics v3:
+
+- exact recovery: 0
+- semantic recovery: 0
+- structural recovery: 4
+- partial recovery: 4
+- missed: 4
+- false positives: 0
+- misleading recovery: 0
+- leakage events: 0
+- precision: 1.0
+- recall: 0.666667
+- F1: 0.8
+- false discovery rate: 0
+- abstraction accuracy: 0.333333
+- correction success rate: 0.333333
+
+The hard-mode misses are retained as failures; they are not hidden by aggregate scoring.
+
+Campaign autonomy
+-----------------
+Lead-falsification campaign: 6 cycles, 112 actions, 169 ordinary candidates, 30 numerical experiments, 4 surviving leads, and 0 serious candidates. Actions covered schema induction/completion, closure, commutator, invariant, residual, validity-region, correction, generalized-identity, and candidate evaluation work. Information gain is assigned per action type; the agenda favored evaluation, schema, residual, and closure actions over repeated formula generation.
+
+Fresh/resume checkpoint comparison completed against the same frozen baseline. Terminal resume did not re-execute the completed action queue and retained the 112-action memory state; no hidden target facts entered Research Memory.
+
+Top 5 lead dossiers
+-------------------
+1. lead-v0.5-1 — `O = B ∘ A`, law, known construction, falsification strength 0.6.
+2. lead-v0.5-2 — `O = B ∘ A`, law, known construction, falsification strength 0.6.
+3. lead-v0.5-3 — `O = B ∘ A`, law, known construction, falsification strength 0.6.
+4. lead-v0.5-4 — `O_alpha = sum(alpha_i O_i)`, parameterized schema, under-specified, falsification strength 0.6.
+5. lead-v0.5-5 — `O_alpha = sum(alpha_i O_i)`, parameterized schema, under-specified, falsification strength 0.6.
+
+Diagnosis
+---------
+A. The engine mostly recovers structure already implicit in the Atlas; factorization leads confirm this.
+
+B. It does infer higher-level repeated laws, especially the two-step-complex schema, but that abstraction is still structurally supported rather than mathematically novel.
+
+C. It can repair the controlled projection failure without receiving the correction expression directly; open-ended leads do not yet generalize beyond their tested regime.
+
+D. It predicts missing roles from meta-patterns, but hard-mode recovery misses show that the ontology and bridge evidence are not yet sufficient for robust hidden-role prediction.
+
+E. Performance first fails at the numerical/counterexample backend and sparse ontology for generalized geometry, boundary, dimension, and regularity regimes. The synthesis grammar and ranking are secondary limitations.
+
+Scientific conclusion
+---------------------
+v0.6 validates the evaluation discipline more strongly than it validates new mathematics: easy/medium/hard behavior is visible, leakage is zero, weak leads are not promoted, and hard failures remain reported. No result is called a new operator, theorem, or new mathematics.

@@ -1,0 +1,18 @@
+Start testing: Aug 15 23:30 +05
+----------------------------------------------------------
+1/1 Testing: opforge_tests
+1/1 Test: opforge_tests
+Command: "/Users/macbookpro/Documents/Operator/build/opforge_tests"
+Directory: /Users/macbookpro/Documents/Operator
+"opforge_tests" start time: Aug 15 23:30 +05
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =  33.06 sec
+----------------------------------------------------------
+Test Passed.
+"opforge_tests" end time: Aug 15 23:31 +05
+"opforge_tests" time elapsed: 00:00:33
+----------------------------------------------------------
+
+End testing: Aug 15 23:31 +05

@@ -1,0 +1,130 @@
+OpForge v0.13 — Semantic Densification + Consequence Closure
+Date: 2026-08-15
+
+Controls
+--------
+The v0.12 unknown-structure, axiomatic, recognition, prediction, scoring,
+falsification, and external-check logic remained unchanged. AI=disabled, target=none,
+Atlas frozen during discovery, CPU backend only. No GPU, Lean, GUI, literature search,
+or unrestricted formula generation was added.
+
+Atlas before closure
+--------------------
+Operators: 98
+Spaces: 47
+Relations: 119
+Identities: 60
+Relation kinds: 27
+Domains: 12
+No breadth-first operator expansion was performed.
+
+Atlas audit v3: issues=0.
+invalid_space_operator_compatibility=0
+impossible_variance=0
+degree_mismatches=0
+inconsistent_adjoint_pairs=0
+inconsistent_bridge_direction=0
+accidental_analogue_equivalence=0
+unsupported_infinite_dimensional_claims=0
+duplicate_semantic_facts=0
+circular_generalization=0
+
+Closure engine
+--------------
+Rule catalog: 9 explicit typed rules.
+Rules include equality substitution, composition substitution, inverse cancellation,
+adjoint reversal, projection idempotence, chain-complex, decomposition, transform,
+and spectral rules.
+Bounded configuration: max_depth=2, max_consequences=80.
+Generated candidates: 92
+Accepted consequences: 34
+Duplicate candidates: 8
+Pruned candidates: 12
+Contradictory candidates: 38
+Maximum derivation depth reached: 1
+Derivation DAG: acyclic=yes
+Derived facts remain provenance=derived_consequence and are not silently curated.
+
+Semantic density after closure
+------------------------------
+Operators: 98
+Relations: 126
+Identities: 94
+Derived consequences: 34
+Semantic bridges: 52
+Connected components: 10
+Average degree: 1.28571
+Median degree: 1
+Cross-domain edge ratio: 0.412698
+Isolated operators: 25
+
+High-level domain density:
+advanced_discrete 6 operators / 7 relations / 2 identities
+differential_forms 10 / 16 / 8
+differential_geometry 9 / 9 / 2
+discrete 12 / 21 / 15
+linear_algebra 16 / 23 / 33
+operator_algebra 7 / 5 / 1
+spectral 6 / 4 / 5
+transforms 11 / 18 / 17
+vector_calculus 6 / 18 / 8
+
+Real Atlas benchmark v2
+-----------------------
+Prediction opportunities: 34
+Attempts: 13
+Successful within-closure predictions: 12
+Leakage failures: 0
+Out-of-domain bridge attempts: 1
+Out-of-domain successes: 0
+The out-of-domain miss was retained with its causal trace and was not upgraded.
+The 12 successful cases were hidden after full-Atlas construction and recovered by
+bounded closure from visible premises; canonical duplicate and provenance leakage
+checks passed.
+
+Atlas A/B/C ablation
+--------------------
+A — v0.11 seed: 12 operators, 0 relations, 3 identities, 0 derived consequences,
+0/0 benchmark attempts.
+B — v0.12 broad/sparse: 98 operators, 98 relations, 48 identities, 45 bounded
+closure consequences, benchmark 8/13.
+C — v0.13 dense: 98 operators, 104 relations, 93 identities, 45 bounded closure
+consequences, benchmark 8/13.
+Conclusion: C adds semantic edges and 45 derived consequences at the selected
+ablation budget; prediction success did not increase in this first frozen run.
+
+Frozen-engine unknown rerun
+----------------------------
+Known structure benchmark: 14 stress cases, 11/11 total successes, held-out 3/3,
+near-miss rejection 1.
+Harder 3-role synthetic benchmark: 2/2 predictions, held-out realization yes,
+near-miss rejected yes, simpler competing hypothesis rejected yes.
+Real hidden split: visible=58, withheld=2, predictions=2, successes=0.
+Real out-of-domain challenge: 0/1.
+Unknown hypotheses generated on real Atlas: 0 strong, 0 external-check candidates.
+Under-specified leads: total=32, resolved=0, unknown-evidence=5, rejected=27,
+prediction-generating=0.
+Campaigns: residual_first, cross_domain_first, prediction_first,
+falsification_first, compression_first.
+
+Scientific answers
+------------------
+A. Semantic densification improved the knowledge graph and produced 34 accepted
+closure facts, but did not improve first-pass real prediction success.
+B. Out-of-domain prediction did not improve: 0/1.
+C. Under-specification did not decrease through forced resolution; 0 leads were
+marked resolved and 27 were explicitly rejected.
+D. No new repeated real unknown residual was strong enough for induction.
+E. Closure produced useful typed consequences, but also exposed 38 contradictory
+candidate derivations; these were reported, not silently selected.
+F. Unknown-structure induction remained stable and synthetic validation stayed clean,
+but real unknown discovery did not improve.
+G. External-check candidates: 0. No novelty claim is justified.
+
+Conclusion
+----------
+v0.13 successfully adds a modular, bounded semantic closure layer, richer typed
+relations, density/graph metrics, leakage-aware real withholding v2, and a genuine
+A/B/C snapshot comparison. The next bottleneck is not Atlas breadth or raw closure;
+it is converting dense cross-domain evidence into prospective out-of-domain
+predictions without contradiction or knowledge saturation.

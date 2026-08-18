@@ -1,0 +1,75 @@
+OpForge v0.3 — Semantic Equivalence + Mathematical Interestingness + Counterexample Oracles
+
+Campaign ID: C-v0.3-blind
+Atlas snapshot: v0.3-semantic-equivalence
+Mode: structural_exploration
+AI: disabled
+Target: none
+Atlas frozen: yes
+Cycles: 4
+Actions executed: 26
+
+Patterns discovered: 287
+Cross-domain patterns: 10
+Structural gaps: 41
+Candidates generated: 169
+Candidates rejected: 43
+Known-equivalent: 8
+Known constructions: 8
+Counterexamples found: 0
+Numerical experiments: 30
+Surviving candidates: 4
+Serious candidates: 0
+False-interest cases: 49
+Failure patterns: 21
+Residual clusters: 15
+Unresolved questions: 3
+Epistemic status: structural_exploration_only
+
+Semantic gate
+-----------
+The campaign now applies a registry-backed semantic gate before a composition is treated as an open candidate. It recognizes Atlas identity rewrites and curated constructions including gradient-divergence/Laplacian, Hessian/Jacobian-gradient, curl-curl decomposition, Hodge-Laplacian, symmetric/skew decomposition, and Fourier correspondence. Eight generated candidates were therefore classified as known-equivalent rather than mathematical novelty.
+
+Interestingness model
+---------------------
+Candidate dossiers expose semantic novelty, generalization power, recovery power, independent relations, compression reduction, invariant potential, cross-domain reach, computational utility, non-triviality, and evidence strength. The score is explanatory and prioritizes structural compression and reusable abstractions; it is not a probability of novelty.
+
+Oracle layer
+-----------
+The regularity, boundary, geometry, dimension, and discretization oracles are assumption-sensitive. They record whether a candidate survives the supported regime, violates a declared regime, or is unsupported by the current backend. This run produced 21 failure patterns across 15 residual clusters, mostly dimension/boundary/regularity limitations of the current R3 symbolic/numerical slice. No executable mathematical counterexample property was supplied, so counterexamples found is zero.
+
+Top candidate dossiers
+----------------------
+- C-676eb65789f95337
+  signature: scalar.r3 -> vector.r3, order=3, linear=true, local=true
+  canonical: compose(ref(op.gradient),ref(op.laplacian))
+  interestingness: 5.6; semantic match: none; numerical: pass/pass/pass
+  oracle: regularity=assumption_violation, boundary=assumption_violation, geometry=unsupported, dimension=assumption_violation, discretization=unsupported
+
+- C-980535b8226fbd83
+  signature: vector.r3 -> matrix.r3, order=3, linear=true, local=true
+  canonical: compose(ref(op.hessian),ref(op.divergence))
+  interestingness: 5.6; semantic match: none; numerical: pass/pass/pass
+  oracle: regularity=assumption_violation, boundary=assumption_violation, geometry=unsupported, dimension=assumption_violation, discretization=unsupported
+
+- C-41373f78a02dd4c8
+  signature: vector.r3 -> vector.r3, order=2, linear=true, local=true
+  canonical: compose(ref(op.gradient),ref(op.divergence))
+  interestingness: 5.6; semantic match: none; numerical: pass/pass/pass
+  oracle: regularity=assumption_violation, boundary=assumption_violation, geometry=unsupported, dimension=assumption_violation, discretization=unsupported
+
+- C-439d69b1d8626aa8
+  signature: vector.n -> scalar.n, order=-1, linear=true, local=false
+  canonical: compose(ref(transform.line_integral),ref(form.pushforward))
+  interestingness: 5.6; semantic family match: transform.line_integral; numerical=unsupported
+  oracle: all unsupported
+
+- C-51415e6e968a29
+  signature: vector.r3 -> scalar.r3, order=3, linear=true, local=true
+  canonical: compose(ref(op.laplacian),ref(op.divergence))
+  interestingness: 5.6; semantic match: none; numerical: pass/pass/pass
+  oracle: regularity=assumption_violation, boundary=assumption_violation, geometry=unsupported, dimension=assumption_violation, discretization=unsupported
+
+Interpretation
+--------------
+The four surviving compositions are structurally distinct from the registered equivalence set, but none is promoted to a serious candidate: every R3 composition remains assumption-dependent, and the non-grid signature is unsupported numerically. They are research leads, not new-operator claims. The next required layer is domain-specific residual/property execution, dimension-parametric typing, boundary-aware tests, and eventually formal proof export.

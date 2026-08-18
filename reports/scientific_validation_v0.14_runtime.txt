@@ -1,0 +1,27 @@
+Analogy baseline: v0.14-structural-analogy-baseline AI=disabled Atlas=frozen
+Candidates: 48 validated=21 partial=27 rejected=0
+Transferred constraints: 268 predictions=93 residuals=2
+Benchmarks: 13
+  analogy-benchmark.1 family=cross_domain_structural success=yes negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.2 family=continuous_discrete success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.3 family=cross_domain_structural success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.4 family=cross_domain_structural success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.5 family=cross_domain_structural success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.6 family=cross_domain_structural success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.7 family=cross_domain_structural success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.8 family=continuous_discrete success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.9 family=continuous_discrete success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.10 family=cross_domain_structural success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.11 family=continuous_discrete success=no negative_transfer_rejected=no leakage_free=yes
+  bridge-benchmark.12 family=cross_domain_structural success=no negative_transfer_rejected=no leakage_free=yes
+  negative-transfer-metric-mismatch family=negative_transfer success=no negative_transfer_rejected=yes leakage_free=yes
+Negative transfers blocked: 1
+A/B/C/D: A=0 B=1 C=1 D=1 conclusion=analogy reasoning did not improve first-pass prediction; negative-transfer and residual evidence remain valuable
+Contradictions: 40 explained=38
+Isolated operators: 25 linked=23
+Under-specified: 32 resolved=0
+Diagnosis: analogy candidates and transfer residuals were evaluated with direct bridges hidden
+Scientific answer: A prospective cross-domain analogical prediction succeeded internally; external checking remains gated.
+
+JSON:
+{"baseline":"v0.14-structural-analogy-baseline","candidates":48,"validated_analogies":21,"partial_analogies":27,"rejected_analogies":0,"transferred_constraints":268,"predictions":93,"transfer_residuals":2,"benchmarks":13,"negative_transfers_blocked":1,"abcd_a_successes":0,"abcd_b_successes":1,"abcd_c_successes":1,"abcd_d_successes":1,"external_check_candidates":0,"ai_enabled":false}

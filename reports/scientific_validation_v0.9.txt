@@ -1,0 +1,65 @@
+OpForge v0.9 — Deep Open-Ended Discovery + Lead Escalation
+
+Baseline
+  Frozen baseline: v0.9-deep-discovery-baseline
+  Atlas mutation: none
+  Research Memory: separate from the frozen Atlas and not shared between campaigns
+  AI: disabled
+  GPU: not implemented
+  External literature search: not performed
+
+Bounded deep campaign
+  Four deterministic campaigns were run on the same baseline:
+    structure_first, failure_first, schema_first, falsification_first
+  Total actions: 364
+  Cycles per campaign: 6
+  Actions per campaign: 91
+  Numerical experiments per campaign: 36
+  Refinements per campaign: 36
+  CPU runtime per campaign: approximately 0.85–0.93 seconds
+  Stopping rule: cycle budget exhausted
+
+Lead escalation
+  Each campaign progressed 7 non-known leads through structural, supported
+  and deep-research depth; 3 factorization leads were classified as known
+  equivalent. Across campaigns this yielded:
+    structural leads: 7 per campaign
+    supported leads: 7 per campaign
+    deep research leads: 7 per campaign
+    external-check candidates: 0
+    serious candidates: 0
+    under-specified leads: 28 across campaigns
+  Average independent evidence channels per campaign lead: 4.8
+
+Prospective and out-of-sample validation
+  Withheld relations were removed before visible pattern analysis.
+  Prospective prediction attempts: 1 per campaign
+  Prediction successes: 0
+  Out-of-sample recoveries: 0
+  Research conclusion: the current deterministic engine did not yet predict
+  withheld structure strongly enough to pass the external-check gate.
+
+Residual significance
+  The large direct/composed Laplacian whole-domain residual was classified as
+  boundary contamination/discretization artifact because the interior and
+  boundary norms separated sharply. Correction synthesis was withheld for
+  this artifact. Curved coordinate consistency passed, but no structured
+  curvature residual survived as a correction lead.
+
+Cross-campaign consensus
+  Independent campaigns recurrently reached the same schema-level leads.
+  Recurrence is evidence of deterministic convergence, not evidence of
+  mathematical novelty; known constructions and under-specified abstractions
+  remain explicitly separated.
+
+Scientific answer
+  No result is currently strong enough to justify external novelty checking.
+  This is a valid negative result for v0.9, not a forced failure: the engine
+  progressed beyond shallow candidate generation but its prospective
+  prediction and correction evidence remain insufficient.
+
+Validation
+  - ctest: 1/1 passed
+  - Atlas audit: issues=0, contradictory=0, missing assumptions=0,
+    duplicate relations=0, bridge type mismatches=0
+  - Atlas validate: 59 operators, 28 spaces, 0 issues

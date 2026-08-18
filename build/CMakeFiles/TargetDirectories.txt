@@ -1,0 +1,7 @@
+/Users/macbookpro/Documents/Operator/build/CMakeFiles/opforge_core.dir
+/Users/macbookpro/Documents/Operator/build/CMakeFiles/opforge_demo.dir
+/Users/macbookpro/Documents/Operator/build/CMakeFiles/opforge.dir
+/Users/macbookpro/Documents/Operator/build/CMakeFiles/opforge_tests.dir
+/Users/macbookpro/Documents/Operator/build/CMakeFiles/test.dir
+/Users/macbookpro/Documents/Operator/build/CMakeFiles/edit_cache.dir
+/Users/macbookpro/Documents/Operator/build/CMakeFiles/rebuild_cache.dir

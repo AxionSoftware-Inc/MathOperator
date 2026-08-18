@@ -1,0 +1,78 @@
+OpForge v0.5 — Open-Ended Structural Discovery
+
+Campaign ID: C-v0.5-open
+Atlas snapshot: v0.5-open-ended-schema
+Mode: structural_exploration
+AI: disabled
+Target: none
+Atlas frozen: yes
+Cycles: 4
+Actions executed: 78
+
+Base patterns: 287
+Meta-pattern families: 6
+Predicted roles: 32
+Induced construction schemas: 20
+Parameterized families: 11
+Schema completions: 4
+Law candidates: 3
+Discovery leads: 14
+Closure findings: 20
+Commutator findings: 24
+Invariant hypotheses: 2
+Validity regions: 7
+Cross-domain patterns: 10
+Structural gaps: 41
+Candidates generated: 169
+Candidates rejected: 43
+Known-equivalent: 8
+Known constructions: 8
+Counterexamples found: 0
+Numerical experiments: 30
+Surviving candidates: 4
+Serious candidates: 0
+False-interest cases: 49
+Failure patterns: 21
+Residual clusters: 15
+Correction attempts: 59
+Successful repairs: 1
+Epistemic status: structural_exploration_only
+
+Construction schemas
+--------------------
+Concrete patterns are lifted into `ConstructionSchema` objects with typed roles, participating spaces, structural constraints, free parameters, identities, assumptions, realization rules, evidence, and source meta-patterns. The run induced schemas for composition/family structure, continuous-discrete relations, graded complex laws, factorization laws, and parameterized typed operator families.
+
+The induced factorization law is represented as:
+
+    O = B ∘ A
+
+with typed role completion and identity-backed realizations. Parameterized families use bounded symbolic parameters and reduction constraints such as typed linear-combination compatibility and recovery normalization; exhaustive parameter search is not used.
+
+Schema compression benchmark
+----------------------------
+Benchmark: `B-schema-compression`
+
+- hidden law: `next ∘ previous = 0`;
+- concrete realizations: 7;
+- inferred: yes;
+- assumptions preserved: yes;
+- compression gain: 0.857143;
+- false abstractions: 0.
+
+The benchmark measures recovery of a higher-level law from concrete realizations and does not expose the meta-law directly to the induction step.
+
+Closure and algebraic analysis
+------------------------------
+The run produced 20 closure findings, 24 typed commutator findings, and 2 invariant hypotheses. Commutator expressions are retained as law candidates with status `structurally_supported` only for trivial self-commutators; other findings remain `unresolved` until symbolic or numerical equality is available. Invariant hypotheses come from Atlas-preservation metadata and remain testable hypotheses rather than theorems.
+
+Validity regions
+----------------
+Seven candidate validity-region maps were produced from residual objects. They separate the current supported typed/numerical regime from regularity, boundary, dimension, and discretization failures and retain residual-family keys and correction requirements. The v0.4 repair benchmark remains successful, but no open-ended candidate was upgraded to a serious candidate solely because it survived finite-difference tests.
+
+Scientific status
+-----------------
+The 14 discovery leads represent multi-realization schema compression, schema completion, factorization, or closure evidence. They are classified as inferred or structurally supported. No result is called new mathematics, a new operator, or a theorem. Serious candidates: 0.
+
+Candidate-growth control
+------------------------
+The ordinary composition search remained at 169 candidates, identical to v0.4. Schema, closure, invariant, and commutator analyses produced structured findings and bounded goals rather than an uncontrolled expression explosion. AI remained disabled and the Atlas remained frozen.

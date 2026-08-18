@@ -1,0 +1,63 @@
+OpForge v0.8 — Numerical Truth Layer + Curved Geometry Execution
+
+Scope
+  AI: disabled
+  Backend: deterministic CPU reference backend
+  GPU: readiness metadata only; no fabricated speedups
+  Discovery grammar: unchanged
+
+Numerical truth layer
+  Evidence hierarchy: smoke_test -> convergent -> independent_path_agreement ->
+  analytic_reference_match -> geometry_validated/boundary_validated ->
+  high_confidence_numerical.
+  Analytic reference suite covers gradient, divergence, curl, Laplacian,
+  Jacobian and Hessian with trigonometric exact derivatives.
+  Adversarial/regularity cases: 8 deterministic property cases; targeted
+  refinement is used when the residual is ambiguous.
+
+Core operator results at the finest tested resolution
+  gradient   analytic_reference_match confidence=0.85 order=2.15089
+  divergence analytic_reference_match confidence=0.85 order=2.14764
+  curl       analytic_reference_match confidence=0.85 order=2.15120
+  Laplacian  analytic_reference_match confidence=0.85 order=0.65746
+  Jacobian   analytic_reference_match confidence=0.85 order=2.14804
+  Hessian    smoke_test confidence=0.20 order=0.59586
+  Numerical evidence remains formally unverified.
+
+Laplacian discrepancy diagnosis
+  Direct kernel vs div(grad), same 32^3 polynomial probe:
+    whole-domain relative discrepancy: 2.50996
+    interior relative discrepancy:      0.0640622
+    boundary relative discrepancy:      5.03202
+  The discrepancy is therefore boundary-stencil/discretization related and
+  is reported rather than hidden by a relaxed tolerance. Direct and composed
+  paths have different backend labels and are evaluated independently.
+
+Curved geometry execution
+  - flat Cartesian metric: analytic Laplace–Beltrami residual < 1e-12
+  - flat polar metric representation: analytic residual < 1e-12
+  - nonzero-curvature conformal 2D metric: analytic residual < 1e-12
+  - coordinate consistency discrepancy: 2.45581e-13
+  - Christoffel/covariant derivative signal: 1.6512
+  - boundary policies exercised: periodic, Dirichlet, Neumann
+  - periodic vs zero-Dirichlet Laplacian policy discrepancy: 0.910068
+
+GPU readiness metadata
+  grid_derivatives: threshold estimate 100000 cells
+  tensor_field_evaluation: threshold estimate 100000 cells
+  batch_candidate_testing: threshold estimate 1000000 cells
+  residual_evaluation: threshold estimate 250000 cells
+
+Validation
+  - ctest: 1/1 passed
+  - Atlas audit: issues=0, contradictory=0, missing assumptions=0,
+    duplicate relations=0, bridge type mismatches=0
+  - Atlas validate: 59 operators, 28 spaces, 0 issues
+
+Remaining limitations
+  - Hessian remains smoke-test level because its boundary-contaminated
+    convergence is not yet strong enough for high-confidence promotion.
+  - Curved execution is intentionally limited to controlled 2D metrics.
+  - Boundary policies are operator-evaluation policies, not a general PDE
+    solver.
+  - Lean/formal proof and CUDA execution remain future layers.

@@ -1,0 +1,85 @@
+OpForge v0.10 — Axiomatic Structure + Predictive Reasoning
+
+Baseline
+  Frozen baseline: v0.10-axiomatic-predictive-baseline
+  AI: disabled
+  GPU: not implemented
+  Lean: not integrated
+  External literature search: not performed
+  Atlas mutation: none
+
+First-class structure layer
+  The ontology now contains explicit MathematicalStructure objects with roles,
+  axioms, assumptions, valid domains, realizations, consequences and provenance.
+  Implemented controlled families: chain complex, projection/idempotent,
+  adjoint pair, decomposition, transform duality, plus reserved typed families.
+  Axioms and observed identities remain separate epistemic objects.
+
+Open axiomatic campaign
+  Mode: axiomatic_open_discovery
+  Campaigns: 4 deterministic bounded campaigns
+  Strategies: structure_first, prediction_first, falsification_first, gap_first
+  Cycles per campaign: 6
+  Actions per campaign: 54
+  Atlas snapshot remained frozen.
+  Recognized structures: 5
+  Partial structures: 0
+  Rejected structures in open Atlas: 0
+  Axioms instantiated: 38
+  Derivation DAG nodes: 38
+  DAG acyclic: yes
+  Leakage-free: yes
+  Structural gaps: 37, synthesis-eligible: 37
+
+Prospective withholding benchmarks
+  Five controlled cases were run with names/IDs hidden and the target revealed
+  only after prediction:
+    chain-complex prediction: success, hard
+    projection/idempotent prediction: success, medium
+    adjoint/decomposition prediction: success, medium
+    transform-duality prediction: success, easy
+    false-chain control: rejected, essential axiom violation detected
+  Structures recognized: 4/4 positive cases
+  Predictions: 4
+  Successful predictions: 4
+  Out-of-sample recoveries: 4
+  False structures rejected: 1
+  Prediction leakage: none
+
+Ablation
+  Pattern/meta-only prediction: 0/0
+  Axiomatic prediction: 4/4, precision=1.0
+  Result: axiomatic reasoning adds controlled prospective consequence
+  prediction beyond the pattern/meta baseline. This is benchmark evidence,
+  not evidence of mathematical novelty.
+
+Derivation discipline
+  Each prediction stores premises, structure, axiom, role substitution,
+  minimal assumptions and a symbolic proof trace.
+  Circular paths and visible-target reuse are rejected by the DAG/leakage gate.
+  Derived facts are classified separately from explicitly stored and restated
+  facts; no formal proof claim is made.
+
+v0.9 lead re-analysis
+  Under-specified leads revisited: 28
+  Structurally upgraded: 5
+  Resolved: 0
+  Still under-specified: 23
+  No lead was auto-promoted to a novelty claim.
+
+Scientific answers
+  A. Can OpForge infer latent structure from low-level relations? Yes for the
+     controlled Atlas families and the bounded open campaign.
+  B. Can it derive unseen consequences? Yes in four withheld benchmarks.
+  C. Does axiomatic reasoning improve prospective prediction? Yes in the
+     controlled ablation: 4/4 versus 0/0 for the pattern-only baseline.
+  D. Does it reject near-miss structures? Yes: the false-chain case was not
+     promoted because an essential zero-composition axiom was contradicted.
+  E. Can it reduce under-specified families? It upgraded 5 leads, but resolved
+     none; 23 remain under-specified.
+  F. Is any lead ready for external novelty checking? No.
+
+Validation
+  - ctest: 1/1 passed
+  - Atlas audit: 0 issues
+  - Atlas validate: 59 operators, 28 spaces, 0 issues

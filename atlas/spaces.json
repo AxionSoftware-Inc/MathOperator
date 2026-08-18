@@ -1,0 +1,1 @@
+{"schema_version":"0.2","atlas_version":"0.2.0","namespace":"opforge.vector_calculus","spaces":[{"id":"scalar.r3","name":"ScalarField(R3)","dimension":3},{"id":"vector.r3","name":"VectorField(R3)","dimension":3},{"id":"matrix.r3","name":"MatrixField(R3)","dimension":3}]}
