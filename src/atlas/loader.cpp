@@ -130,6 +130,7 @@ private:
 const JsonValue* member(const JsonValue& object, const std::string& name) {
   const auto it=object.object.find(name); return it==object.object.end()?nullptr:&it->second;
 }
+bool has_member(const JsonValue& object, const std::string& name) { return member(object, name) != nullptr; }
 std::string string_value(const JsonValue& object, const std::string& name, const std::string& fallback={}) { const auto* value=member(object,name); return value&&value->kind==JsonValue::Kind::String?value->string:fallback; }
 bool boolean_value(const JsonValue& object, const std::string& name, bool fallback) { const auto* value=member(object,name); return value&&value->kind==JsonValue::Kind::Boolean?value->boolean:fallback; }
 int integer_value(const JsonValue& object, const std::string& name, int fallback) { const auto* value=member(object,name); return value&&value->kind==JsonValue::Kind::Number?static_cast<int>(value->number):fallback; }
@@ -246,6 +247,26 @@ Atlas AtlasLoader::load_excluding(const std::string& path, const std::set<std::s
       space.id = id;
       space.name = name;
       space.dimension = integer_value(item, "dimension", -1);
+      space.dimension_explicit = has_member(item, "dimension");
+      space.grade = integer_value(item, "grade", integer_value(item, "object_grade", -1));
+      space.grade_explicit = has_member(item, "grade") || has_member(item, "object_grade");
+      space.base_domain = string_value(item, "base_domain");
+      space.regularity = string_value(item, "regularity");
+      space.metric = boolean_value(item, "metric", false);
+      space.metric_explicit = has_member(item, "metric");
+      space.orientation = boolean_value(item, "orientation", false);
+      space.orientation_explicit = has_member(item, "orientation");
+      space.boundary = boolean_value(item, "boundary", false);
+      space.boundary_explicit = has_member(item, "boundary");
+      space.continuous = boolean_value(item, "continuous", true);
+      space.continuous_explicit = has_member(item, "continuous");
+      space.discrete = boolean_value(item, "discrete", false);
+      space.discrete_explicit = has_member(item, "discrete");
+      space.geometry_regime = string_value(item, "geometry_regime", "euclidean_flat");
+      space.geometry_explicit = has_member(item, "geometry_regime");
+      const auto scalar = string_value(item, "scalar_field");
+      if (scalar == "complex") space.scalar_field = ScalarField::Complex;
+      space.scalar_field_explicit = !scalar.empty();
       atlas.add_space(std::move(space));
     }
 
@@ -267,6 +288,16 @@ Atlas AtlasLoader::load_excluding(const std::string& path, const std::set<std::s
       record.signature.discrete = boolean_value(item, "discrete", false);
       record.signature.linear = boolean_value(item, "linear", true);
       record.signature.local = boolean_value(item, "local", true);
+      record.signature.linear_explicit = has_member(item, "linear");
+      record.signature.continuous_explicit = has_member(item, "continuous");
+      record.signature.discrete_explicit = has_member(item, "discrete");
+      record.signature.local_explicit = has_member(item, "local");
+      record.signature.grade = integer_value(item, "grade", -1);
+      record.signature.grade_explicit = has_member(item, "grade");
+      if (!record.signature.grade_explicit && has_member(item, "domain_grade")) {
+        record.signature.grade = integer_value(item, "domain_grade", -1);
+        record.signature.grade_explicit = true;
+      }
       record.definition = record.id.find(".zero") != std::string::npos
                               ? Expression::zero()
                               : Expression::ref(record.id);

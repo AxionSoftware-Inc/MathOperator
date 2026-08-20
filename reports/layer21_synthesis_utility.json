@@ -1,0 +1,65 @@
+{
+  "verdict": "LIMITED_GENERATIVE_SYNTHESIS_DEMONSTRATED",
+  "deterministic_digest": "layer21_benchmark_digest.4c26807e3ed03a83",
+  "determinism": {
+    "repetitions": 3,
+    "passed": true
+  },
+  "formal_backend_status": "FORMAL VERIFICATION BACKEND: NOT YET IMPLEMENTED",
+  "leakage": {
+    "passed": true,
+    "hidden_target_in_solver_input": false,
+    "expected_expression_in_solver_input": false,
+    "benchmark_id_in_solver_input": false,
+    "scorer_data_in_solver_input": false,
+    "target_specific_branch_found": false,
+    "alias_description_metadata_leakage": false,
+    "opaque_id_robust": true,
+    "opaque_positive_cases": 2,
+    "runtime_llm_calls": false,
+    "discovery_numerical_experiments": 0
+  },
+  "schemas": [
+    {"id":"layer21.schema.composition.v1","family":"COMPOSITION","open_discovery":true,"goal_directed":true,"allow_unknown":false},
+    {"id":"layer21.schema.adjoint.v1","family":"ADJOINT","open_discovery":false,"goal_directed":true,"allow_unknown":true},
+    {"id":"layer21.schema.inverse.left.v1","family":"INVERSE_CANDIDATE","open_discovery":false,"goal_directed":true,"allow_unknown":true},
+    {"id":"layer21.schema.inverse.right.v1","family":"INVERSE_CANDIDATE","open_discovery":false,"goal_directed":true,"allow_unknown":true},
+    {"id":"layer21.schema.inverse.two-sided.v1","family":"INVERSE_CANDIDATE","open_discovery":false,"goal_directed":true,"allow_unknown":true},
+    {"id":"layer21.schema.commutator.v1","family":"COMMUTATOR","open_discovery":false,"goal_directed":true,"allow_unknown":true},
+    {"id":"layer21.schema.conjugation.v1","family":"CONJUGATION","open_discovery":false,"goal_directed":true,"allow_unknown":true},
+    {"id":"layer21.schema.indexed-instantiation.v1","family":"INDEXED_INSTANTIATION","open_discovery":true,"goal_directed":true,"allow_unknown":false}
+  ],
+  "cases": [
+    {"id":"layer21.composition.holdout","family":"COMPOSITION","structural":"VALID_ALTERNATIVE","precondition":"VALID","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"SYNTHESIZED_VALID_EXPRESSION","candidate_count":1,"target_blind":true,"leakage_free":true},
+    {"id":"layer21.composition.opaque","family":"COMPOSITION","structural":"VALID_ALTERNATIVE","precondition":"VALID","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"SYNTHESIZED_VALID_EXPRESSION","candidate_count":1,"target_blind":true,"leakage_free":true,"opaque_id_case":true},
+    {"id":"layer21.adjoint.holdout","family":"ADJOINT","structural":"VALID_ALTERNATIVE","precondition":"VALID","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"SYNTHESIZED_VALID_EXPRESSION","candidate_count":4,"target_blind":true,"leakage_free":true},
+    {"id":"layer21.adjoint.opaque","family":"ADJOINT","structural":"VALID_ALTERNATIVE","precondition":"VALID","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"SYNTHESIZED_VALID_EXPRESSION","candidate_count":4,"target_blind":true,"leakage_free":true,"opaque_id_case":true},
+    {"id":"layer21.adjoint.missing-structure","family":"ADJOINT","structural":"VALID_ALTERNATIVE_WITH_OPEN_PRECONDITION","precondition":"UNKNOWN","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"CANDIDATE_BUT_OPEN_PRECONDITION","candidate_count":4,"target_blind":true,"leakage_free":true},
+    {"id":"layer21.inverse.structured","family":"INVERSE_CANDIDATE","structural":"VALID_ALTERNATIVE","precondition":"VALID","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"SYNTHESIZED_INVERSE_CANDIDATE","candidate_count":4,"target_blind":true,"leakage_free":true},
+    {"id":"layer21.inverse.unknown-precondition","family":"INVERSE_CANDIDATE","structural":"VALID_ALTERNATIVE_WITH_OPEN_PRECONDITION","precondition":"UNKNOWN","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"CANDIDATE_BUT_NOT_PROVEN_INVERTIBILITY","candidate_count":4,"target_blind":true,"leakage_free":true},
+    {"id":"layer21.commutator.holdout","family":"COMMUTATOR","structural":"VALID_ALTERNATIVE","precondition":"VALID","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"SYNTHESIZED_VALID_EXPRESSION","candidate_count":20,"target_blind":true,"leakage_free":true},
+    {"id":"layer21.commutator.invalid-type","family":"COMMUTATOR","structural":"MISS","precondition":"NONE","proof":"UNSUPPORTED","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"NO_FALSE_POSITIVE","candidate_count":0,"target_blind":true,"leakage_free":true},
+    {"id":"layer21.conjugation.holdout","family":"CONJUGATION","structural":"VALID_ALTERNATIVE","precondition":"VALID","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"SYNTHESIZED_VALID_EXPRESSION","candidate_count":1,"target_blind":true,"leakage_free":true},
+    {"id":"layer21.indexed-family","family":"INDEXED_INSTANTIATION","structural":"VALID_ALTERNATIVE","precondition":"VALID","proof":"OPEN","search":"EXHAUSTED_RELATIVE_SPACE","scorer_outcome":"SYNTHESIZED_VALID_EXPRESSION","candidate_count":1,"target_blind":true,"leakage_free":true},
+    {"id":"layer21.missing-tensor-product","family":"TENSOR_PRODUCT","structural":"MISS","precondition":"UNSUPPORTED","proof":"UNSUPPORTED","search":"UNSUPPORTED_LANGUAGE","scorer_outcome":"UNSUPPORTED_LANGUAGE","candidate_count":0,"target_blind":true,"leakage_free":true}
+  ],
+  "open_discovery": {
+    "policy":"OPEN_DISCOVERY_GRAMMAR depth=1 cost=4 budget=256",
+    "raw_constructor_applications":144,
+    "valid":50,
+    "invalid":94,
+    "unknown":0,
+    "quotient_merges":0,
+    "retained_classes":62,
+    "serious_candidates":0,
+    "budget_pruned":0,
+    "numerical_experiments":0,
+    "unrestricted_linear_combinations":false
+  },
+  "scaling": [
+    {"primitives":3,"composition_raw":9,"composition_retained":12,"layer21_raw":39,"layer21_type_invalid":0,"layer21_unknown":30,"layer21_quotient_merges":0,"layer21_retained":42,"layer21_peak_frontier":42,"composition_runtime_ms":19.2782,"layer21_runtime_ms":114.838,"runtime_excluded_from_identity":true},
+    {"primitives":6,"composition_raw":36,"composition_retained":42,"layer21_raw":132,"layer21_type_invalid":0,"layer21_unknown":96,"layer21_quotient_merges":0,"layer21_retained":138,"layer21_peak_frontier":138,"composition_runtime_ms":79.0938,"layer21_runtime_ms":418.77,"runtime_excluded_from_identity":true},
+    {"primitives":9,"composition_raw":81,"composition_retained":90,"layer21_raw":279,"layer21_type_invalid":0,"layer21_unknown":198,"layer21_quotient_merges":0,"layer21_retained":288,"layer21_peak_frontier":288,"composition_runtime_ms":185.312,"layer21_runtime_ms":938.515,"runtime_excluded_from_identity":true}
+  ],
+  "top_bottlenecks": ["FORMAL_VERIFICATION","SEARCH_SCALABILITY","SPACE_STRUCTURE_CONSTRAINTS"]
+}

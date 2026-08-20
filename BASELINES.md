@@ -78,6 +78,50 @@ The counts measure different stages and must not be cosmetically normalized.
 Definitions and the `391` versus `62`/`650` explanation are frozen in the
 scientific regression report.
 
+## Layer-24 search scalability baseline
+
+Layer 24 is a separate goal-directed path; the historical open-discovery
+baseline above is unchanged. Verified result:
+
+- verdict: `SCALABLE_CONSTRAINT_DIRECTED_SEARCH_DEMONSTRATED`;
+- 8/8 finite reference/optimized cases have identical canonical exact and
+  fully explored UNKNOWN sets;
+- shallow constrained materialization reductions include commutator 10→8,
+  conjugation 10→8, restriction 12→6, tensor 42→3, indexed 9→7, and UNKNOWN
+  explosion 124→22; multi-step is 95→93 with conservative internal retention;
+- finite exhaustive control: raw 12, one retained constructor representative,
+  three primitive terminals, eight type-invalid, zero resource-pruned,
+  `EXHAUSTED_RELATIVE_SPACE`, accounting pass;
+- finite budget control: same raw 12, nine resource-pruned,
+  `BUDGET_ENDED`, `relative_complete=false`;
+- UNKNOWN budget control: 10 UNKNOWN states, 8 deferred,
+  `INCOMPLETE_UNKNOWN`;
+- distractor scaling (synthetic fixture): full theory 16→1006 operators,
+  relevant slice fixed at 4, optimized materialization fixed at 8;
+- million-scale stress: 1,000,000 raw, 999,999 avoided, 1 materialized, 1
+  retained, 0 UNKNOWN, `EXHAUSTED_RELATIVE_SPACE` for the declared synthetic
+  relative space; and
+- controlled vector-calculus seed probe: 12 operators, 39 full facts,
+  11-operator/33-fact slice, 19 materialized, 8 retained, 0 UNKNOWN;
+- full production Atlas integration through `AtlasLoader::load("atlas")`: 98
+  operators, 47 spaces, 119 relations, 67 statements (6 executable equalities,
+  61 semantic statements), Atlas digest
+  `layer24-atlas-snapshot.267014ce981723bb`;
+- full Layer-23 migration: 6 previous fully structured, 321 newly structured,
+  327 cumulative fully structured, 220 partial, 0 unsupported; 47 space
+  properties, 0 structured space relations, 274 operator properties, and 4
+  trusted rules;
+- full-Atlas probe: 8 operators / 24 facts / 1 space / 4 rules in the slice;
+  optimized 64 attempted, 72 materialized, 64 exact retained, 0 UNKNOWN;
+  full reference 58016 attempted, 20579 materialized, 64/64 canonical
+  equivalence, `EXHAUSTED_RELATIVE_SPACE`; and
+- full-Atlas three-run replay, Theory-mutation cache invalidation, Context
+  isolation, and Regime isolation: passed.
+
+Full case outputs, scorer isolation, ledger controls, and machine metrics are
+in `reports/layer24_search_scalability_v2.md` and
+`reports/layer24_search_scalability_v2.json`.
+
 ## Layer 15 regression verification
 
 Layer 15 was added as a separate semantic-core library surface. The frozen
@@ -211,6 +255,7 @@ Layer 19 is measured separately with:
 
 ```bash
 ./build/opforge benchmark verification atlas
+./build/opforge benchmark synthesis_utility atlas
 ```
 
 The capability baseline is:
@@ -238,6 +283,134 @@ change the frozen discovery numerical experiment count, which remains zero:
 `discovery_numerical_experiments=0`. Verification requests are counted
 separately as `verification_numerical_experiments`.
 
+## Layer 20 practical utility baseline
+
+Layer 20 is measured separately with:
+
+    ./build/opforge benchmark utility_gate atlas
+
+The frozen Layer-20 result is:
+
+- 15 cases;
+- structural exact/valid-alternative/partial/miss/false-positive:
+  1/6/0/8/0;
+- proof complete/partial/open/unsupported/falsified: 0/0/11/1/3;
+- search exhausted/budget-ended/incomplete-or-invalid/unsupported-language:
+  9/1/3/2;
+- negative controls: 5/5;
+- target-blind leakage audit: PASS;
+- opaque-ID synthesis: PASS;
+- deterministic replay: 3/3;
+- legacy open discovery generated/pruned/serious: 62/650/0;
+- target-free hidden forward fixture: raw 6, retained classes 4, lossless
+  reductions 2, unresolved 0, status EXHAUSTED_RELATIVE_SPACE;
+- discovery numerical experiments: 0; and
+- formal backend: NOT YET IMPLEMENTED.
+
+The budget-ended synthesis control has relative_complete=false and is never
+counted as relative exhaustion. The real-Atlas transfer case is explicitly
+NOT_RUN_REAL_ATLAS_LIMITATION; the controlled typed bridge probe is not called
+a transfer theorem. The full case-by-case result and audit fields are in
+reports/layer20_practical_utility.md and reports/layer20_practical_utility.json.
+
+## Layer 21 generative synthesis baseline
+
+Layer 21 is measured separately with:
+
+```bash
+./build/opforge benchmark synthesis_utility atlas
+```
+
+The historical Layer-20 section above is frozen. Layer 21 adds a generic
+constructor grammar and does not alter the earlier counts.
+
+Measured Layer-21 result:
+
+- verdict: `LIMITED_GENERATIVE_SYNTHESIS_DEMONSTRATED`;
+- 12 target-blind controlled cases;
+- implemented families: composition, adjoint, left/right/two-sided inverse
+  candidates, commutator, conjugation, and indexed instantiation;
+- opaque-ID positives: 2;
+- open policy enables composition and indexed instantiation only;
+- open raw/valid/invalid/unknown: 144/50/94/0;
+- open quotient merges/retained/serious/budget-pruned: 0/62/0/0;
+- two UNKNOWN-precondition controls remain open and are not counted as valid
+  theorems;
+- tensor/product missing-constructor control remains `UNSUPPORTED_LANGUAGE`;
+- target-blind leakage PASS, false positives 0, discovery numerics 0, runtime
+  LLM calls 0, and unrestricted linear combinations disabled;
+- deterministic replay: 3/3, digest
+  `layer21_benchmark_digest.4c26807e3ed03a83`;
+- Release CTest 8/8; ASan/UBSan CTest 8/8; and
+- formal backend: `NOT YET IMPLEMENTED`.
+
+The detailed case disclosure and exact canonical candidates are in
+[reports/layer21_generative_operator_synthesis.md](reports/layer21_generative_operator_synthesis.md)
+and [reports/layer21_synthesis_utility.json](reports/layer21_synthesis_utility.json).
+
+## Layer 22 constraint-guided synthesis baseline
+
+Layer 22 is measured separately with:
+
+```bash
+./build/opforge benchmark constraint_synthesis atlas
+```
+
+The historical Layer-20 and Layer-21 sections above remain frozen. The
+Layer-22 result is:
+
+- verdict: `CONSTRAINT_GUIDED_SYNTHESIS_DEMONSTRATED`;
+- 11 target-blind controlled cases and 2 opaque-ID positives;
+- type-only ambiguity retained 4 candidates;
+- constrained adjoint, commutator, conjugation, and indexed cases retained 1
+  exact structural-form candidate each;
+- left-inverse retained 2 open candidates, while two-sided inverse retained 1
+  open candidate; neither inverse law was claimed proven;
+- false-property negative: 0 retained candidates; UNKNOWN property: 22 open
+  candidates and 48 proof obligations;
+- scaling Layer-21 type-only compatible / Layer-22 retained classes:
+  `39/1`, `132/1`, `279/1` for 3/6/9 operators;
+- leakage/scorer isolation PASS; opaque-ID PASS; numerics 0; runtime LLM 0;
+- real Atlas probe: 6 fully structured facts,
+  `UNSUPPORTED_CONSTRAINT_LANGUAGE`; and
+- deterministic replay 3/3, digest
+  `layer22_benchmark_digest.d148a171b146b533`.
+
+Layer-22 raw attempt counts include pre-expansion applicability checks and
+post-expansion type checks, so they are not required to equal Layer-21
+generated-candidate counts. The detailed definitions and per-case outputs are
+in [reports/layer22_constraint_guided_synthesis.md](reports/layer22_constraint_guided_synthesis.md)
+and [reports/layer22_constraint_guided_synthesis.json](reports/layer22_constraint_guided_synthesis.json).
+
+## Layer 23 rich mathematical semantics baseline
+
+Layer 23 is measured separately with:
+
+```bash
+./build/opforge benchmark rich_semantics atlas
+```
+
+The verified result is `RICH_OPERATOR_SEMANTICS_DEMONSTRATED`. The migration
+ledger reports 6 previously fully structured facts, 321 newly structured facts,
+327 cumulative fully structured facts, 220 partial facts, and 0 unsupported
+facts. The rich theory contains 47 spaces, 47 space-property facts, 274
+operator-property facts, 0 explicit space relations, and 4 trusted rule
+schemas. Real Atlas probes report 88 linear, 47 space, 0 indexed, and 10
+inverse/commutation facts.
+
+The target-blind suite has 14 cases and 2 opaque-ID positive reruns. Its
+controls keep missing inclusion, dual-versus-adjoint, partial facts, numerical
+closeness, and unknown regimes from becoming false positives. Scaling records
+Layer-21 attempts / Layer-23 attempts `7/21`, `7/78`, and `7/171` for 3/6/9
+operators; each retains 2 classes with peak retained frontier 2 and 0 unknown
+type decisions. Leakage and opaque-ID checks pass; discovery numerics and
+runtime LLM calls are 0; deterministic digest is
+`layer23_benchmark_digest.6b6b46b6e7002750`.
+
+Layer-23 metrics do not rewrite frozen Layer-20/21/22 baselines. Extension,
+pullback/pushforward, arbitrary coefficient search, formal theorem proving,
+and physics remain deferred.
+
 ## Required baseline commands
 
 ```bash
@@ -248,6 +421,7 @@ separately as `verification_numerical_experiments`.
 ./build/opforge benchmark goal_search atlas
 ./build/opforge benchmark proof_plan atlas
 ./build/opforge benchmark verification atlas
+./build/opforge benchmark search_scalability atlas
 ```
 
 For a baseline rerun, record:

@@ -1,8 +1,8 @@
-# OpForge Layer 15–20 roadmap
+# OpForge Layer 15–21 roadmap
 
-This roadmap is frozen at the architecture level. Layers 15, 16, 17, and 18
-are implemented within their recorded scopes; Layer 19 remains separately
-scoped. The foundational review is
+This roadmap is frozen at the architecture level. Layers 15, 16, 17, 18, 19,
+and 20 are implemented/evaluated within their recorded scopes. The
+foundational review is
 [OPFORGE_ARCHITECTURE_V1_REVIEW.md](reports/OPFORGE_ARCHITECTURE_V1_REVIEW.md).
 
 Epistemic status, provenance, target blindness, and the distinction between
@@ -419,6 +419,196 @@ Layers 15–19 and a frozen held-out problem suite with acceptance criteria.
 - no hidden target/scorer data in discovery;
 - utility output with zero serious candidates; and
 - preservation of all Phase-0 and Scientific Regression Baseline v1 controls.
+
+### Verified Layer-20 result
+
+The generic Layer-20 harness is implemented in
+include/opforge/utility/layer20.hpp and src/utility/layer20.cpp. It evaluates
+15 cases through the Layer-17 -> Layer-18 -> Layer-19 handoff, plus a
+target-free forward-discovery fixture.
+
+Measured result:
+
+- verdict: LIMITED_STRUCTURAL_UTILITY_DEMONSTRATED;
+- structural exact/valid-alternative/partial/miss/false-positive:
+  1/6/0/8/0;
+- negative controls: 5/5;
+- target-blind leakage audit: PASS;
+- opaque-ID synthesis: PASS;
+- determinism: 3/3;
+- legacy open discovery generated/pruned/serious: 62/650/0;
+- discovery numerics: 0;
+- formal backend: NOT YET IMPLEMENTED.
+
+The budgeted synthesis control is BUDGET_ENDED with relative_complete=false,
+while its unbudgeted counterpart is EXHAUSTED_RELATIVE_SPACE. The adjoint
+probe remains UNSUPPORTED_LANGUAGE. Real-Atlas transfer is not run as a sound
+claim because the structured bridge contract is absent. The complete audit is
+in reports/layer20_practical_utility.md and the deterministic summary is in
+reports/layer20_practical_utility.json.
+
+## Layer 21 — Generative Operator Synthesis v1
+
+### Purpose
+
+Expand the mathematical construction grammar while keeping Atlas primitives,
+typed/context/regime safety, quotienting, proof obligations, verification, and
+target blindness separate.
+
+### Implemented scope
+
+Layer 21 adds a generic `ConstructorSchema` catalog with tri-state prerequisite
+classification, deterministic cost/depth/provenance, separate open and
+goal-directed policies, target-output matching before child expansion, and
+generated-expression identity distinct from Atlas operators. Implemented
+families are typed composition, adjoint, left/right/two-sided inverse
+candidates, commutator, conjugation, and indexed instantiation. Anti-commutator
+and restriction/extension are deferred for semantic reasons; unrestricted
+linear combinations and tensor/product construction remain disabled.
+
+Every generated construction is sent through the Layer-16 quotient path and
+then receives Layer-18 obligations and Layer-19 evidence status. Constructor
+creation is not a proof. The formal verification backend remains unavailable.
+
+### Verified Layer-21 result
+
+The target-blind controlled suite has 12 cases, including two opaque-ID
+successes, adjoint and inverse UNKNOWN controls, an incompatible commutator,
+and a missing tensor constructor. The result is:
+
+- `LIMITED_GENERATIVE_SYNTHESIS_DEMONSTRATED`;
+- leakage audit PASS, opaque-ID PASS, false positives 0;
+- open discovery raw/valid/invalid/unknown: 144/50/94/0;
+- open retained classes/serious/budget-pruned: 62/0/0;
+- discovery numerics 0, runtime LLM calls 0;
+- deterministic replay 3/3, digest
+  `layer21_benchmark_digest.4c26807e3ed03a83`;
+- Release CTest 8/8 and ASan/UBSan CTest 8/8; and
+- Layer 22 was not part of this Layer-21 result; its separate implementation
+  and baseline are recorded below.
+
+The detailed case report is in
+`reports/layer21_generative_operator_synthesis.md`; the machine summary is in
+`reports/layer21_synthesis_utility.json`. Layer 20's historical result remains
+frozen and is not recomputed as a Layer-21 result.
+
+## Layer 22 — Constraint-Guided Mathematical Synthesis v1
+
+### Purpose and boundary
+
+Layer 22 makes synthesis goal/property constrained instead of relying only on
+output type. It reuses Layer-15 semantic terms and judgments, extracts a
+deterministic `SemanticConstraint` set from the target, propagates supported
+requirements backward through Layer-21 constructor schemas, and applies
+tri-state constructor applicability before child expansion. It remains a
+separate target-directed path; open discovery has no target ConstraintSet and
+is unchanged.
+
+Hard constraints may reject only decisive type, regime, index, or structured
+form violations. Open proof constraints retain candidates with explicit
+`ProofObligation` records. `UNKNOWN` is never `SATISFIED`, and
+`UNSUPPORTED` is never converted to false. Constructor contracts now expose
+definition-level form guarantees separately from theorem requirements without
+changing the frozen Layer-21 canonical output.
+
+The exact v1 ceiling is type equality/definedness, composition intermediate
+typing, reversed unary typing, explicit adjoint/commutator/conjugation forms,
+represented index offsets, exact regimes, and trusted structured facts. It is
+not a theorem prover, arithmetic SMT solver, formal verifier, numerical ranker,
+or LLM runtime.
+
+### Verified Layer-22 result
+
+The controlled suite has 11 target-blind cases, two opaque-ID positives, a
+false-property negative, an UNKNOWN-property control, and separate left and
+two-sided inverse-law cases. The result is:
+
+- `CONSTRAINT_GUIDED_SYNTHESIS_DEMONSTRATED`;
+- leakage/scorer isolation PASS; opaque-ID PASS;
+- deterministic replay 3/3, digest
+  `layer22_benchmark_digest.d148a171b146b533`;
+- discovery/synthesis numerics 0, runtime LLM calls 0, and unrestricted
+  arbitrary linear combinations disabled;
+- scaling type-only Layer-21 compatible / Layer-22 retained classes:
+  `39/1`, `132/1`, `279/1` for 3/6/9 operators;
+- real Atlas probe: 6 fully structured facts and
+  `UNSUPPORTED_CONSTRAINT_LANGUAGE` for the self-adjoint property; and
+- Layer 23 is implemented separately below; it was not part of the frozen
+  Layer-22 result.
+
+The full case-by-case, candidate-reduction, proof-obligation, scaling, leakage,
+and limitation report is in
+`reports/layer22_constraint_guided_synthesis.md`; machine output is in
+`reports/layer22_constraint_guided_synthesis.json`.
+
+## Layer 23 — Rich Mathematical Semantics and Construction Grammar v2
+
+### Purpose and boundary
+
+Layer 23 makes mathematical space/operator semantics explicit enough for
+conservative construction, while retaining the Layer-22 target-directed
+constraint boundary. It adds typed space properties and relations, operator
+property facts, declared/derived/open/unknown status, reusable trusted rule
+schemas, and context/regime-aware goal-directed constructors. Restriction,
+tensor, dual-map, adjoint, product, composition, and controlled scalar
+descriptors are distinct forms. Extension, pullback/pushforward, arbitrary
+coefficient search, and formal theorem proving remain deferred.
+
+### Verified Layer-23 result
+
+The target-blind suite measures:
+
+- `RICH_OPERATOR_SEMANTICS_DEMONSTRATED`;
+- 14 controlled cases, including two opaque-ID positives and explicit negative
+  controls for missing inclusion, dual-versus-adjoint, partial facts, and
+  numerical closeness;
+- migration `6` previously fully structured, `321` newly structured, `327`
+  cumulative fully structured, `220` partial, and `0` unsupported facts;
+- theory size: 47 spaces, 47 space-property facts, 274 operator-property
+  facts, 0 explicit space relations, and 4 trusted rule schemas;
+- real Atlas probes: 88 linear, 47 space, 0 indexed, and 10
+  inverse/commutation facts;
+- Layer-21 attempts / Layer-23 attempts `7/21`, `7/78`, `7/171` at 3/6/9
+  operators, with 2 retained classes, 0 unknown type decisions, and peak
+  retained frontier 2;
+- leakage and opaque-ID PASS, discovery numerics 0, runtime LLM calls 0, and
+  no partial-fact promotion; and
+- deterministic digest
+  `layer23_benchmark_digest.6b6b46b6e7002750`.
+
+The rich path is not enabled by the legacy open-discovery policy. Layer-23
+constructors are goal-directed, use no scorer/target data, preserve UNKNOWN
+and proof obligations, and do not change the frozen Layer-20/21/22 metrics.
+Full case disclosure and machine output are in
+`reports/layer23_rich_mathematical_semantics.md` and
+`reports/layer23_rich_mathematical_semantics.json`.
+
+## Layer 24 — Search Scalability v2
+
+Layer 24 adds constraint-directed lazy mathematical search as a separate path.
+The implementation includes deterministic SearchPlan compilation, typed
+Theory indexes, bounded backward/forward demand slicing, lazy constructor
+expansion, incremental constraints, context/regime/theory cache isolation,
+canonical quotient insertion, indexed frontier meetings, explicit UNKNOWN and
+resource budgets, and streaming million-scale accounting.
+
+Measured result:
+
+- `SCALABLE_CONSTRAINT_DIRECTED_SEARCH_DEMONSTRATED`;
+- 8/8 finite reference-versus-optimized canonical equivalence cases passed;
+- finite exhaustive control ended `EXHAUSTED_RELATIVE_SPACE` with conservation
+  accounting pass;
+- the same finite grammar under budget ended `BUDGET_ENDED` and did not claim
+  exhaustion;
+- UNKNOWN budget control ended `INCOMPLETE_UNKNOWN` with 10 UNKNOWN and 8
+  deferred states;
+- distractor scaling held the relevant slice at 4 operators while the full
+  theory grew to 1006 operators; and
+- the 1,000,000-state structural stress materialized 1 target-relevant state.
+
+Layer 24 does not implement Layer 25, Layer 26, physics, or grammar expansion.
+Its full measured report is `reports/layer24_search_scalability_v2.md` and its
+machine summary is `reports/layer24_search_scalability_v2.json`.
 
 ## Layer Gate policy
 

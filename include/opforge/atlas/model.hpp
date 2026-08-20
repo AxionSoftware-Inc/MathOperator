@@ -18,6 +18,10 @@ struct MathematicalSpace {
   std::string geometry_regime{"euclidean_flat"};
   std::string variance{"scalar"};
   std::string bundle;
+  // Loader provenance: a default value is not an explicit mathematical fact.
+  bool dimension_explicit{false}, grade_explicit{false}, scalar_field_explicit{false};
+  bool metric_explicit{false}, orientation_explicit{false}, boundary_explicit{false};
+  bool continuous_explicit{false}, discrete_explicit{false}, geometry_explicit{false};
 };
 struct OperatorSignature {
   SpaceRef domain, codomain;
@@ -29,6 +33,9 @@ struct OperatorSignature {
   std::string variance{"scalar"};
   int grade{-1};
   int arity{1};
+  // These flags prevent Layer 23 from treating parser defaults as declared facts.
+  bool linear_explicit{false}, continuous_explicit{false}, discrete_explicit{false};
+  bool local_explicit{false}, grade_explicit{false};
 };
 struct Expression;
 using ExpressionPtr = std::shared_ptr<const Expression>;

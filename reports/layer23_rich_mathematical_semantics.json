@@ -1,0 +1,61 @@
+{
+  "verdict": "RICH_OPERATOR_SEMANTICS_DEMONSTRATED",
+  "deterministic_digest": "layer23_benchmark_digest.6b6b46b6e7002750",
+  "migration": {
+    "before_fully_structured": 6,
+    "newly_structured": 321,
+    "fully_structured": 327,
+    "remaining_partial": 220,
+    "unsupported": 0,
+    "structured_space_facts": 47,
+    "structured_space_relations": 0,
+    "structured_operator_properties": 274,
+    "trusted_rule_schemas": 4
+  },
+  "real_atlas": {
+    "linear_probes": 88,
+    "space_probes": 47,
+    "indexed_probes": 0,
+    "adjoint_inverse_commutation_probes": 10,
+    "status": "STRUCTURED_FACTS_AVAILABLE_WITH_PARTIAL_FIREWALL"
+  },
+  "leakage": {
+    "passed": true,
+    "opaque_id_robust": true,
+    "hidden_target_in_solver_input": false,
+    "expected_expression_in_solver_input": false,
+    "display_name_dependency": false,
+    "analogy_as_equality": false,
+    "partial_fact_promoted": false,
+    "numerical_guidance": false,
+    "runtime_llm": false
+  },
+  "cases": [
+    {"id":"layer23.restriction.valid","category":"RESTRICTION_SPACE_INCLUSION","classification":"STRUCTURAL_RECOVERY","final_status":"EXACT_CONSTRAINT_SATISFACTION","opaque_id":false},
+    {"id":"layer23.restriction.missing-inclusion","category":"RESTRICTION_SPACE_INCLUSION","classification":"STRUCTURAL_WITH_OPEN_CONSTRAINTS","final_status":"STRUCTURAL_WITH_OPEN_CONSTRAINTS","opaque_id":false},
+    {"id":"layer23.restriction.opaque","category":"RESTRICTION_SPACE_INCLUSION","classification":"STRUCTURAL_RECOVERY","final_status":"EXACT_CONSTRAINT_SATISFACTION","opaque_id":true},
+    {"id":"layer23.tensor.valid","category":"TENSOR_OPERATOR_CONSTRUCTION","classification":"STRUCTURAL_RECOVERY","final_status":"EXACT_CONSTRAINT_SATISFACTION","opaque_id":false},
+    {"id":"layer23.tensor.opaque","category":"TENSOR_OPERATOR_CONSTRUCTION","classification":"STRUCTURAL_RECOVERY","final_status":"EXACT_CONSTRAINT_SATISFACTION","opaque_id":true},
+    {"id":"layer23.dual-map.valid","category":"DUAL_MAP_CONSTRUCTION","classification":"STRUCTURAL_RECOVERY","final_status":"EXACT_CONSTRAINT_SATISFACTION","opaque_id":false},
+    {"id":"layer23.dual-adjoint.negative","category":"DUAL_ADJOINT_DISTINCTION","classification":"STRUCTURAL_WITH_OPEN_CONSTRAINTS","final_status":"STRUCTURAL_WITH_OPEN_CONSTRAINTS","opaque_id":false},
+    {"id":"layer23.propagation.linear-composition","category":"GENERIC_RULE_SCHEMA_PROPAGATION","classification":"STRUCTURAL_RECOVERY","final_status":"EXACT_CONSTRAINT_SATISFACTION","opaque_id":false},
+    {"id":"layer23.propagation.missing-linear","category":"GENERIC_RULE_SCHEMA_PROPAGATION","classification":"STRUCTURAL_WITH_OPEN_CONSTRAINTS","final_status":"STRUCTURAL_WITH_OPEN_CONSTRAINTS","opaque_id":false},
+    {"id":"layer23.cross-space.linear-preservation","category":"CROSS_SPACE_BRIDGE","classification":"STRUCTURAL_RECOVERY","final_status":"STRUCTURAL_RECOVERY","opaque_id":false},
+    {"id":"layer23.cross-space.no-idempotent-law","category":"CROSS_SPACE_NEGATIVE","classification":"UNKNOWN","final_status":"UNKNOWN","opaque_id":false},
+    {"id":"layer23.partial-fact-firewall","category":"PARTIAL_FACT_NEGATIVE","classification":"NO_FALSE_POSITIVE","final_status":"NO_FALSE_POSITIVE","opaque_id":false},
+    {"id":"layer23.numerical-closeness-negative","category":"NUMERICAL_NEGATIVE","classification":"NO_FALSE_POSITIVE","final_status":"NO_FALSE_POSITIVE","opaque_id":false},
+    {"id":"layer23.unknown-regime","category":"UNKNOWN_REGIME_NEGATIVE","classification":"UNKNOWN","final_status":"UNKNOWN","opaque_id":false}
+  ],
+  "scaling": [
+    {"operators":3,"layer21_attempts":7,"layer23_attempts":21,"property_checks":2,"invalid":19,"unknown":0,"retained":2,"peak_frontier":2},
+    {"operators":6,"layer21_attempts":7,"layer23_attempts":78,"property_checks":2,"invalid":76,"unknown":0,"retained":2,"peak_frontier":2},
+    {"operators":9,"layer21_attempts":7,"layer23_attempts":171,"property_checks":2,"invalid":169,"unknown":0,"retained":2,"peak_frontier":2}
+  ],
+  "deferred_families": [
+    "Extension: DEFERRED_DUE_TO_NONUNIQUENESS_OR_MISSING_RULE",
+    "Pullback/Pushforward: DEFERRED_DUE_TO_MISSING_SMOOTH_MAP_AND_DOMAIN_RELATION",
+    "ControlledLinearCombination: DEFERRED_DUE_TO_NO_ARBITRARY_COEFFICIENT_SEARCH",
+    "formal theorem proving: NOT IMPLEMENTED"
+  ],
+  "formal_backend_status": "FORMAL VERIFICATION BACKEND: NOT YET IMPLEMENTED"
+}

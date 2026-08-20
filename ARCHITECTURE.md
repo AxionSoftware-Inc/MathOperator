@@ -4,8 +4,10 @@ This document freezes the repository-level architecture and records the
 implementation boundary. Layers 15 and 16 are implemented as parallel semantic
 and quotient paths, Layer 17 is a separate deterministic goal-directed reasoning
 path, Layer 18 is a separate deterministic proof-planning path, and Layer 19 is
-a separate deterministic verification/evidence path; legacy closure/search
-migration remains deferred.
+a separate deterministic verification/evidence path. Layer 21 adds a separate
+deterministic constructor-synthesis path and Layer 22 adds a separate
+deterministic constraint-guided synthesis path; legacy closure/search migration
+remains deferred.
 
 The complete adversarial review is
 [OPFORGE_ARCHITECTURE_V1_REVIEW.md](reports/OPFORGE_ARCHITECTURE_V1_REVIEW.md).
@@ -15,7 +17,8 @@ The implementation details and gate results are in
 [reports/layer16_quotient_search.md](reports/layer16_quotient_search.md),
 [reports/layer17_bidirectional_reasoning.md](reports/layer17_bidirectional_reasoning.md),
 [reports/layer18_proof_planning.md](reports/layer18_proof_planning.md),
-and [reports/layer19_verification.md](reports/layer19_verification.md).
+and [reports/layer19_verification.md](reports/layer19_verification.md),
+plus [reports/layer21_generative_operator_synthesis.md](reports/layer21_generative_operator_synthesis.md).
 
 ## 1. Foundational model
 
@@ -284,7 +287,133 @@ candidate generation, ranking, discovery frontiers, or quotient equivalence.
 Novelty remains an explicit external status; Atlas absence is not novelty.
 There is no production formal prover in Layer 19.
 
-## 10. Relative search completeness
+## 10. Layer-21 generative constructor boundary
+
+Layer 21 separates Atlas knowledge from generative vocabulary:
+
+```text
+Theory / Atlas primitives
+  + ConstructorSchema catalog
+  + typed/context/regime constraints
+  + goal-directed constructor matching
+  + Layer-16 quotient
+  + Layer-18 obligations / Layer-19 verification
+```
+
+`ConstructorSchema` is first-class and records its stable family ID, arity,
+input requirements, output-type derivation, context/regime requirements,
+parameter/index constraints, generated side conditions, cost/depth,
+provenance, open-discovery availability, goal-directed availability, and
+UNKNOWN policy. Constructor application has a tri-state prerequisite result:
+`VALID`, `INVALID`, or `UNKNOWN`. INVALID applications do not become valid
+candidates; UNKNOWN applications are admitted only by an explicit
+goal-directed policy and retain unresolved obligations.
+
+The v1 catalog implements typed composition, adjoint candidates, left/right/
+two-sided inverse candidates, explicit commutators, conjugation candidates, and
+indexed family instantiation. Anti-commutator and restriction/extension remain
+deferred because the current semantic core cannot represent their side
+conditions soundly. Arbitrary coefficient enumeration is disabled.
+
+Open discovery enables only composition and indexed instantiation by default.
+Goal-directed matching uses the target output type before child expansion, then
+passes every generated construction through Layer 16. A generated expression
+is distinct from an Atlas primitive and carries its schema, child IDs,
+indices, context/regime digest, obligations, provenance, and depth/cost.
+Constructor creation does not prove adjointness, invertibility, commutator
+legitimacy, or transport theorems. Layer 18/19 can leave these obligations
+OPEN, UNKNOWN, or UNSUPPORTED.
+
+## 10A. Layer-22 constraint-guided boundary
+
+Layer 22 consumes the same machine-readable `Theory + Context + target
+Judgment` problem boundary and adds a reusable `SemanticConstraint` set. The
+constraint model wraps Layer-15 terms and judgments; it does not parse natural
+language or create a parallel proposition language. Requirements have explicit
+hard/open strength, provenance, graph dependencies, substitutions, and one of
+`SATISFIED`, `VIOLATED`, `UNKNOWN`, or `UNSUPPORTED` status.
+
+Goal extraction is deterministic. Constructor applicability is tri-state and
+is evaluated before child expansion. Supported exact propagation covers type
+and composition compatibility, reversed unary types, explicit constructor
+forms, represented index offsets, and exact regime checks. Inverse laws,
+adjoint identities, commutation theorems, and conjugation transport remain open
+unless an already trusted structured fact discharges them. UNKNOWN is retained
+only under an explicit policy and always becomes a proof obligation; it is not
+an exact solution or a rejection.
+
+The Layer-22 path is separate from open discovery. It never receives benchmark
+answers, scorer callbacks, benchmark IDs, expected properties, numerical
+results, or runtime LLM output. It does not add unrestricted linear
+combinations. Its relative search status is scoped to the recorded theory,
+context, regime, constructor grammar, constraint language, propagation rules,
+depth, cost, budget, and equivalence contract.
+
+The measured result is
+`CONSTRAINT_GUIDED_SYNTHESIS_DEMONSTRATED`; the real Atlas probe remains
+`UNSUPPORTED_CONSTRAINT_LANGUAGE` at the current six fully structured facts.
+Details are in
+[reports/layer22_constraint_guided_synthesis.md](reports/layer22_constraint_guided_synthesis.md).
+
+## 10B. Layer 23 rich mathematical semantics boundary
+
+Layer 23 is a separate semantic path above the frozen Layer-22 constraint
+contract. Atlas migration records explicit facts conservatively: parser
+defaults are not treated as declared mathematical properties, metric metadata
+is not silently promoted to an inner-product law, and partial facts remain
+available only as partial evidence. The rich theory distinguishes space
+properties/relations, operator properties, declared facts, derived facts,
+open obligations, and unknown decisions.
+
+The trusted rule catalog is typed and small: composition linearity,
+composition invertibility, tensor typing/linearity, and restriction from an
+explicit inclusion. Restriction requires `U inclusion V`; tensor requires
+explicit tensor-capable spaces; dual maps require explicit dual-space
+relations; adjoints require explicit inner-product spaces. Pullback/pushforward
+and Extension are deferred when their side conditions are not explicit.
+
+Rich constructors are goal-directed and target-blind. They receive a typed
+problem and constraints, never a benchmark target ID, expected expression,
+family, or scorer callback. No rich constructor is enabled in the legacy open
+discovery policy. The Layer-22 bridge exposes rich declared/derived property
+facts as ordinary semantic observations for entailment, while preserving
+`UNKNOWN` and proof obligations.
+
+The measured Layer-23 result is
+`RICH_OPERATOR_SEMANTICS_DEMONSTRATED`; the exact probes, opaque-ID test,
+negative controls, scaling metrics, and deferred boundaries are recorded in
+[reports/layer23_rich_mathematical_semantics.md](reports/layer23_rich_mathematical_semantics.md).
+
+## 10C. Layer 24 constraint-directed lazy search
+
+Layer 24 is a separate goal-directed search path. Its deterministic SearchPlan
+compiles Theory, Context, ValidityRegime, target constraints, rich semantic
+facts/rules, constructor schemas, bounds, and equivalence identity. Theory
+indexes provide typed operator/property/space/relation/indexed-family lookup.
+Forward generation is demand-directed and lazy; canonical expression identity,
+type/property caches, and context/regime/theory digests isolate replay and
+mutation. A bounded forward/backward demand graph supplies relevant slices and
+indexed frontier meetings. Internal multi-step operands are retained whenever
+final-output filtering would be unsound.
+
+The implementation keeps the search engine in `src/search/layer24.cpp` and the
+benchmark text/JSON serialization in `src/search/layer24_report.cpp`; report
+formatting is therefore not coupled to discovery execution.
+
+Reference and optimized searches must agree on exact and fully explored UNKNOWN
+canonical sets for each declared finite grammar. Resource limits produce
+BUDGET_ENDED; bounded UNKNOWN deferral produces INCOMPLETE_UNKNOWN. No target
+ID, expected expression, benchmark identity, scorer, numerical experiment, or
+runtime LLM enters the search path. Partial Layer-23 facts remain outside
+trusted pruning/equality.
+
+The measured Layer-24 result is
+SCALABLE_CONSTRAINT_DIRECTED_SEARCH_DEMONSTRATED. The full case disclosure,
+finite ledger controls, distractor scaling, real-Atlas probe, and million-scale
+stress are in
+[reports/layer24_search_scalability_v2.md](reports/layer24_search_scalability_v2.md).
+
+## 11. Relative search completeness
 
 Completeness is always relative to a frozen contract:
 
@@ -312,7 +441,7 @@ Lossless canonicalization, alpha-equivalence, certified symmetry quotienting,
 and proof-backed theorem consequence elimination are reported separately from
 heuristic ranking, top-N, frontier, and resource pruning.
 
-## 11. Layer and gate policy
+## 12. Layer and gate policy
 
 The corrected Layer 15–20 contract is frozen in [ROADMAP.md](ROADMAP.md).
 Every layer must pass the software, scientific, and search gates described

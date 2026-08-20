@@ -1,7 +1,7 @@
 #include "opforge/atlas/seed.hpp"
 namespace opforge::atlas {
 static OperatorRecord op(const char* id,const char* name,const char* symbol,const char* domain,const char* codomain,int order,const char* inreg,const char* outreg,ObjectKind in,ObjectKind out) {
-  OperatorRecord r{id,name,symbol}; r.signature.domain={domain,domain}; r.signature.codomain={codomain,codomain}; r.signature.input_kind=in; r.signature.output_kind=out; r.signature.differential_order=order; r.signature.regularity=inreg; r.signature.output_regularity=outreg; r.coordinate_definition=symbol; r.definition=Expression::ref(id); r.evidence.push_back({std::string(id)+".source","source_verified","seed","0.1","2026-08-15","seed","accepted","",-1}); r.verification=derive_status(r.evidence); return r;
+  OperatorRecord r{id,name,symbol}; r.signature.domain={domain,domain}; r.signature.codomain={codomain,codomain}; r.signature.input_kind=in; r.signature.output_kind=out; r.signature.differential_order=order; r.signature.regularity=inreg; r.signature.output_regularity=outreg; r.signature.linear_explicit=true; r.signature.continuous_explicit=true; r.signature.local_explicit=true; r.coordinate_definition=symbol; r.definition=Expression::ref(id); r.evidence.push_back({std::string(id)+".source","source_verified","seed","0.1","2026-08-15","seed","accepted","",-1}); r.verification=derive_status(r.evidence); return r;
 }
 Atlas make_vector_calculus_seed() {
   Atlas a;

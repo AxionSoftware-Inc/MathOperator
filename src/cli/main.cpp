@@ -6,9 +6,14 @@
 #include "opforge/analogy/engine.hpp"
 #include "opforge/benchmarks/rediscovery.hpp"
 #include "opforge/search/quotient.hpp"
+#include "opforge/constraints/layer22.hpp"
 #include "opforge/reasoning/bidirectional.hpp"
 #include "opforge/proof/planning.hpp"
 #include "opforge/verification/layer19.hpp"
+#include "opforge/utility/layer20.hpp"
+#include "opforge/generation/layer21.hpp"
+#include "opforge/semantic/layer23.hpp"
+#include "opforge/search/layer24.hpp"
 
 #include <fstream>
 #include <filesystem>
@@ -34,7 +39,7 @@ bool flag(int argc, char** argv, const std::string& name) {
 
 int main(int argc, char** argv) {
   if (argc < 2) {
-    std::cerr << "usage: opforge atlas validate|audit|stats|graph|closure|density|benchmark_v2|ablation_abc [path] | discover|resume [options] | benchmark blind_rediscovery|scaling|open_search|quotient_search|goal_search|proof_plan|verification [path] | report <path>\n"
+    std::cerr << "usage: opforge atlas validate|audit|stats|graph|closure|density|benchmark_v2|ablation_abc [path] | discover|resume [options] | benchmark blind_rediscovery|scaling|open_search|quotient_search|goal_search|proof_plan|verification|utility_gate|synthesis_utility|constraint_synthesis|rich_semantics|search_scalability [path] | report <path>\n"
               << "options: --verify-numerics enables proof-stage numerics; --numeric-diagnostics runs geometry diagnostics; "
               << "--max-composition-checks/--max-graph-edges/--max-patterns bound search\n";
     return 2;
@@ -286,6 +291,46 @@ int main(int argc, char** argv) {
       std::cout << opforge::verification::export_text(report)
                 << "JSON:\n" << opforge::verification::export_json(report) << "\n";
       return report.numerics_firewall_passed ? 0 : 1;
+    }
+    if (subcommand == "utility_gate") {
+      const auto report = opforge::utility::run_layer20_benchmarks(atlas);
+      std::cout << opforge::utility::export_text(report)
+                << "JSON:\n" << opforge::utility::export_json(report) << "\n";
+      return report.practical_utility_verdict == "LAYER20_GATE_FAILED_DUE_TO_UNSOUNDNESS" ||
+                     !report.leakage.passed() || !report.determinism.passed
+                 ? 1
+                 : 0;
+    }
+    if (subcommand == "synthesis_utility") {
+      const auto report = opforge::generation::run_layer21_benchmarks(atlas);
+      std::cout << opforge::generation::export_text(report)
+                << "JSON:\n" << opforge::generation::export_json(report) << "\n";
+      return report.verdict == "LAYER21_FAILED_DUE_TO_UNSOUNDNESS" ||
+                     !report.leakage.passed || !report.determinism.passed
+                 ? 1
+                 : 0;
+    }
+    if (subcommand == "constraint_synthesis") {
+      const auto report = opforge::constraints::run_layer22_benchmarks(atlas);
+      std::cout << opforge::constraints::export_text(report)
+                << "JSON:\n" << opforge::constraints::export_json(report) << "\n";
+      return report.verdict == "LAYER22_FAILED_DUE_TO_UNSOUNDNESS" ||
+                     !report.leakage.passed || !report.determinism.passed
+                 ? 1
+                 : 0;
+    }
+    if (subcommand == "rich_semantics") {
+      const auto report = opforge::rich::run_layer23_benchmarks(atlas);
+      std::cout << opforge::rich::export_text(report)
+                << "JSON:\n" << opforge::rich::export_json(report) << "\n";
+      return report.verdict == "LAYER23_FAILED_DUE_TO_UNSOUNDNESS" || !report.leakage.passed ? 1 : 0;
+    }
+    if (subcommand == "search_scalability") {
+      const auto source_label = argc >= 4 ? "AtlasLoader::load(" + std::string(argv[3]) + ")" : "make_vector_calculus_seed()";
+      const auto report = opforge::search24::run_layer24_benchmarks(atlas, source_label);
+      std::cout << opforge::search24::export_text(report)
+                << "JSON:\n" << opforge::search24::export_json(report) << "\n";
+      return report.verdict == "LAYER24_FAILED_DUE_TO_UNSOUNDNESS" || !report.leakage.passed || !report.determinism.passed ? 1 : 0;
     }
   }
 

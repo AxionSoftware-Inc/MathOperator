@@ -58,6 +58,9 @@ enum class ExpressionKind {
   ScalarMultiplication,
   DirectSum,
   Adjoint,
+  InverseCandidate,
+  Commutator,
+  Conjugation,
   Literal,
   Zero,
   Identity
@@ -288,6 +291,9 @@ struct Expression {
   static ExpressionPtr scalar_multiplication(std::string scalar, ExpressionPtr expression);
   static ExpressionPtr direct_sum(ExpressionPtr left, ExpressionPtr right);
   static ExpressionPtr adjoint(ExpressionPtr expression);
+  static ExpressionPtr inverse_candidate(ExpressionPtr expression, std::string inverse_kind);
+  static ExpressionPtr commutator(ExpressionPtr left, ExpressionPtr right);
+  static ExpressionPtr conjugation(ExpressionPtr transform, ExpressionPtr expression);
   static ExpressionPtr literal(std::string value, const TypeRef& type);
   static ExpressionPtr zero(const TypeRef& type);
   static ExpressionPtr identity(const TypeRef& type);

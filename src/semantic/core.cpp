@@ -54,6 +54,8 @@ struct OperatorTypeResult {
   std::string reason;
 };
 
+OperatorTypeResult operator_type(const ExpressionPtr& expression, const Theory& theory);
+
 std::optional<IndexTerm> binding_for(const std::map<std::string, IndexTerm>& bindings,
                                      const std::string& name) {
   const auto found = bindings.find(name);
@@ -90,6 +92,42 @@ OperatorTypeResult operator_type(const ExpressionPtr& expression, const Theory& 
       return {TypeCheckStatus::Invalid, TypeRef::unknown(), TypeRef::unknown(),
               "outer operator domain does not match inner operator codomain"};
     return {TypeCheckStatus::Valid, inner.domain, outer.codomain, {}};
+  }
+  if (expression->kind == ExpressionKind::Adjoint ||
+      expression->kind == ExpressionKind::InverseCandidate) {
+    if (expression->children.size() != 1)
+      return {TypeCheckStatus::Invalid, TypeRef::unknown(), TypeRef::unknown(), "unary operator constructor requires one child"};
+    const auto child = operator_type(expression->children[0], theory);
+    if (child.status != TypeCheckStatus::Valid)
+      return {child.status, TypeRef::unknown(), TypeRef::unknown(), "unary operator constructor type is unresolved"};
+    return {TypeCheckStatus::Valid, child.codomain, child.domain, {}};
+  }
+  if (expression->kind == ExpressionKind::Commutator && expression->children.size() == 2) {
+    const auto left = operator_type(expression->children[0], theory);
+    const auto right = operator_type(expression->children[1], theory);
+    if (left.status != TypeCheckStatus::Valid || right.status != TypeCheckStatus::Valid) {
+      const auto status = left.status == TypeCheckStatus::Invalid || right.status == TypeCheckStatus::Invalid
+                              ? TypeCheckStatus::Invalid : TypeCheckStatus::Unknown;
+      return {status, TypeRef::unknown(), TypeRef::unknown(), "commutator operand type is unresolved"};
+    }
+    if (left.domain != left.codomain || right.domain != right.codomain ||
+        left.domain != right.domain)
+      return {TypeCheckStatus::Invalid, TypeRef::unknown(), TypeRef::unknown(),
+              "commutator requires compatible endomorphisms"};
+    return {TypeCheckStatus::Valid, left.domain, left.codomain, {}};
+  }
+  if (expression->kind == ExpressionKind::Conjugation && expression->children.size() == 2) {
+    const auto transform = operator_type(expression->children[0], theory);
+    const auto operation = operator_type(expression->children[1], theory);
+    if (transform.status != TypeCheckStatus::Valid || operation.status != TypeCheckStatus::Valid) {
+      const auto status = transform.status == TypeCheckStatus::Invalid || operation.status == TypeCheckStatus::Invalid
+                              ? TypeCheckStatus::Invalid : TypeCheckStatus::Unknown;
+      return {status, TypeRef::unknown(), TypeRef::unknown(), "conjugation operand type is unresolved"};
+    }
+    if (transform.codomain != operation.domain || operation.domain != operation.codomain)
+      return {TypeCheckStatus::Invalid, TypeRef::unknown(), TypeRef::unknown(),
+              "conjugation requires an endomorphism on the transform target space"};
+    return {TypeCheckStatus::Valid, transform.domain, transform.domain, {}};
   }
   if (expression->kind != ExpressionKind::OperatorReference &&
       expression->kind != ExpressionKind::IndexedOperatorReference &&
@@ -291,6 +329,9 @@ const char* to_string(ExpressionKind value) {
     case ExpressionKind::ScalarMultiplication: return "scalar_multiplication";
     case ExpressionKind::DirectSum: return "direct_sum";
     case ExpressionKind::Adjoint: return "adjoint";
+    case ExpressionKind::InverseCandidate: return "inverse_candidate";
+    case ExpressionKind::Commutator: return "commutator";
+    case ExpressionKind::Conjugation: return "conjugation";
     case ExpressionKind::Literal: return "literal";
     case ExpressionKind::Zero: return "zero";
     case ExpressionKind::Identity: return "identity";
@@ -515,6 +556,19 @@ ExpressionPtr Expression::direct_sum(ExpressionPtr left, ExpressionPtr right) {
 ExpressionPtr Expression::adjoint(ExpressionPtr child) {
   Expression expression; expression.kind = ExpressionKind::Adjoint; expression.children = {std::move(child)}; return make_expression(std::move(expression));
 }
+ExpressionPtr Expression::inverse_candidate(ExpressionPtr child, std::string inverse_kind) {
+  Expression expression; expression.kind = ExpressionKind::InverseCandidate;
+  expression.literal_value = std::move(inverse_kind); expression.children = {std::move(child)};
+  return make_expression(std::move(expression));
+}
+ExpressionPtr Expression::commutator(ExpressionPtr left, ExpressionPtr right) {
+  Expression expression; expression.kind = ExpressionKind::Commutator;
+  expression.children = {std::move(left), std::move(right)}; return make_expression(std::move(expression));
+}
+ExpressionPtr Expression::conjugation(ExpressionPtr transform, ExpressionPtr child) {
+  Expression expression; expression.kind = ExpressionKind::Conjugation;
+  expression.children = {std::move(transform), std::move(child)}; return make_expression(std::move(expression));
+}
 ExpressionPtr Expression::literal(std::string value, const TypeRef& type) {
   Expression expression; expression.kind = ExpressionKind::Literal; expression.literal_value = std::move(value); expression.declared_type = type; return make_expression(std::move(expression));
 }
@@ -705,11 +759,18 @@ TypeCheckResult type_check(const ExpressionPtr& expression, const Theory& theory
                 TypeRef::unknown(), "direct sum type is unresolved"};
       return {TypeCheckStatus::Valid, TypeRef::indexed("DirectSum", {TypeArgument::literal(left.type.canonical()), TypeArgument::literal(right.type.canonical())}), {}};
     }
-    case ExpressionKind::Adjoint: {
+    case ExpressionKind::Adjoint:
+    case ExpressionKind::InverseCandidate: {
       if (expression->children.size() != 1) return {TypeCheckStatus::Invalid, TypeRef::unknown(), "adjoint requires one child"};
       const auto operation = operator_type(expression->children[0], theory);
       if (operation.status != TypeCheckStatus::Valid) return {operation.status, TypeRef::unknown(), operation.reason};
       return {TypeCheckStatus::Valid, TypeRef::operator_type(operation.codomain, operation.domain), {}};
+    }
+    case ExpressionKind::Commutator:
+    case ExpressionKind::Conjugation: {
+      const auto operation = operator_type(expression, theory);
+      if (operation.status != TypeCheckStatus::Valid) return {operation.status, TypeRef::unknown(), operation.reason};
+      return {TypeCheckStatus::Valid, TypeRef::operator_type(operation.domain, operation.codomain), {}};
     }
     case ExpressionKind::Literal:
       return expression->declared_type.is_unknown()

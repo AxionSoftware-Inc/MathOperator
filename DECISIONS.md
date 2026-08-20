@@ -335,3 +335,118 @@ novelty remains an explicit external status.
 **Revisit condition:** A separately reviewed formal or symbolic backend may be
 added only with declared capabilities, certificate validation/replay,
 tamper/invalidation tests, and preserved Layer-15–18 baselines.
+
+## ADR-017 — Keep Layer 21 constructors separate from Atlas primitives
+
+**Decision:** Introduce a first-class `ConstructorSchema` catalog for
+generative expressions. Constructor applications are typed, context/regime
+checked, tri-state (`VALID`/`INVALID`/`UNKNOWN`), costed, provenance-bearing,
+and passed through Layer 16 before Layer-18/19 handoff. Generated expressions
+remain distinct from Atlas primitives and are never silently inserted into the
+Atlas.
+
+Open discovery enables only the conservative composition and indexed schemas;
+adjoint, inverse, commutator, and conjugation are goal-directed in v1. UNKNOWN
+prerequisites may be retained only when the goal-directed policy explicitly
+allows them and the resulting obligations remain open.
+
+**Reason:** Layer 20 identified construction grammar as the dominant utility
+bottleneck, but expanding vocabulary must not weaken target blindness,
+relative-completeness accounting, proof boundaries, or the numerics/LLM
+firewalls.
+
+**Consequences:** Layer 21 can synthesize typed candidates beyond Atlas lookup
+while preserving honest open, unsupported, and negative-control results. The
+controlled evaluation demonstrates limited generative synthesis, not formal
+proof, universal scalability, or physics reasoning.
+
+**Revisit condition:** Any new constructor family requires an explicit schema,
+side-condition semantics, blind holdout, negative control, quotient ledger
+integration, and proof-obligation contract. This decision itself did not start
+Layer 22; the subsequent constraint contract is recorded in ADR-018.
+
+## ADR-018 — Make semantic constraints first-class in Layer 22
+
+**Decision:** Add a separate constraint-guided synthesis path with a reusable
+`SemanticConstraint` model wrapping Layer-15 expressions, judgments, contexts,
+validity regimes, indices, substitutions, provenance, and proof obligations.
+Constructor applicability is tri-state and property entailment is conservative:
+hard violations may prune; open or unsupported decisions remain visible.
+
+**Reason:** Layer 21 showed that type-compatible construction is materially
+ambiguous. The next sound improvement is to derive explicit requirements from a
+machine-readable target and propagate them before child expansion, rather than
+ranking or scorer-guiding a large candidate set.
+
+**Consequences:** Layer 22 demonstrates reductions for structured adjoint,
+commutator, conjugation, and indexed-form goals while retaining UNKNOWN inverse
+and commutation obligations. Constructor definition-level form guarantees are
+separate from mathematical theorems. Open discovery, numerics, scorer data,
+runtime LLM use, unrestricted linear combinations, and historical Layer 15–21
+outputs remain unchanged.
+
+**Revisit condition:** Extend the constraint language only with a new exact
+fragment, independent negative controls, provenance/ledger accounting, and
+preserved UNKNOWN/proof boundaries. The current real-Atlas boundary is six
+fully structured facts; synthetic controlled success must not be relabeled as
+Atlas success. Layer 23 is a separate contract recorded in ADR-019.
+
+## ADR-019 — Add a conservative rich mathematical semantic layer
+
+**Decision:** Add Layer 23 as a separate rich semantic theory and
+goal-directed construction path. Represent explicit space properties and
+relations, operator properties, declared versus derived facts, open/unknown
+status, typed reusable rules, and context/regime conditions. Require explicit
+side conditions for restriction, tensor, dual maps, and adjoints; preserve
+unknown obligations when those conditions are unavailable. Do not enable the
+rich constructors in legacy open discovery.
+
+**Reason:** The earlier layers could express useful typed and constraint-guided
+forms but could not distinguish several mathematically different constructions
+or propagate their properties conservatively. A richer semantic boundary is
+the smallest sound extension: it improves representation and goal-directed
+construction without pretending that metadata, partial facts, numerical
+closeness, or constructor shape are proofs.
+
+**Measured consequence:** The target-blind Layer-23 suite reports
+`RICH_OPERATOR_SEMANTICS_DEMONSTRATED`; real Atlas migration yields 327
+cumulative fully structured and 220 partial facts, with 14 controlled cases,
+two opaque-ID positives, no false-positive firewall failures, and deterministic
+digest `layer23_benchmark_digest.6b6b46b6e7002750`.
+
+**Revisit condition:** Add new semantic families only with explicit typed
+side-condition rules, held-out and negative controls, target-blind/opaque-ID
+tests, provenance and proof-obligation accounting, and preserved historical
+Layer-20/21/22 results. Extension, pullback/pushforward, arbitrary coefficient
+search, formal theorem proving, and physics are not part of this decision.
+
+## ADR-020 — Make Layer 24 scalability demand-directed and relative
+
+**Decision:** Add Layer 24 as a separate constraint-directed lazy search path.
+Compile a deterministic SearchPlan, index trusted typed theory facts, slice
+bounded forward/backward demands, expand constructors only after indexed
+applicability checks, memoize semantic expressions, and quotient at insertion.
+Reference equivalence is required for every finite grammar before a reduction
+supports an exhaustion claim.
+
+**Reason:** The main remaining search cost is construction of mathematically
+irrelevant typed states. Demand-directed structural pruning can reduce that
+work without using names, scorer data, numerical ranking, or heuristic deletion.
+
+**Consequences:** `EXHAUSTED_RELATIVE_SPACE`, `BUDGET_ENDED`, and
+`INCOMPLETE_UNKNOWN` remain distinct. Context, regime, Theory mutation, and
+equivalence identity are cache inputs. Partial facts remain outside trusted
+pruning. Layer 24 demonstrates target-blind relative scalability, not global
+mathematical completeness or universal speedup.
+
+**Measured consequence:** Eight finite reference/optimized cases have identical
+canonical exact/UNKNOWN sets; the finite ledger control passes conservation,
+the budget control ends without exhaustion, the UNKNOWN budget defers eight
+states, and the million-scale streaming stress materializes one of 1,000,000
+raw possibilities. The verified verdict is
+`SCALABLE_CONSTRAINT_DIRECTED_SEARCH_DEMONSTRATED`.
+
+**Revisit condition:** Any stronger multi-step pruning, e-graph, grammar
+expansion, formal proof integration, or open-discovery optimization requires a
+new finite equivalence/control suite and must preserve the Layer-24 ledger and
+UNKNOWN boundaries. This decision does not start Layer 25.

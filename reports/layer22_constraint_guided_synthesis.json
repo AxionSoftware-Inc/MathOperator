@@ -1,0 +1,64 @@
+{
+  "verdict": "CONSTRAINT_GUIDED_SYNTHESIS_DEMONSTRATED",
+  "benchmark_command": "./build/opforge benchmark constraint_synthesis atlas",
+  "deterministic_digest": "layer22_benchmark_digest.d148a171b146b533",
+  "determinism": {
+    "repetitions": 3,
+    "passed": true,
+    "digests": [
+      "layer22_benchmark_digest.d148a171b146b533",
+      "layer22_benchmark_digest.d148a171b146b533",
+      "layer22_benchmark_digest.d148a171b146b533"
+    ]
+  },
+  "leakage": {
+    "passed": true,
+    "operator_id_or_name_leak": false,
+    "alias_leak": false,
+    "description_leak": false,
+    "relation_id_leak": false,
+    "family_name_leak": false,
+    "benchmark_id_leak": false,
+    "metadata_leak": false,
+    "source_reference_leak": false,
+    "target_specific_branch": false,
+    "scorer_in_search": false,
+    "numerical_guidance": false,
+    "runtime_llm": false,
+    "opaque_id_robust": true
+  },
+  "cases": [
+    {"id":"layer22.type-only-ambiguity","classification":"TYPE_ONLY_MATCH","candidate_count":4,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":4,"hard_prunes":2,"unknown":0,"exact":0,"proof_obligations":5},
+    {"id":"layer22.adjoint-constrained","classification":"EXACT_CONSTRAINT_SATISFACTION","candidate_count":1,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":1,"hard_prunes":6,"unknown":0,"exact":1,"proof_obligations":1},
+    {"id":"layer22.adjoint.opaque","classification":"EXACT_CONSTRAINT_SATISFACTION","candidate_count":1,"opaque_id":true,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":1,"hard_prunes":6,"unknown":0,"exact":1,"proof_obligations":1},
+    {"id":"layer22.inverse.left_inverse","classification":"STRUCTURAL_WITH_OPEN_CONSTRAINTS","candidate_count":2,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":3,"hard_prunes":5,"unknown":2,"exact":0,"proof_obligations":5},
+    {"id":"layer22.inverse.two_sided_inverse","classification":"STRUCTURAL_WITH_OPEN_CONSTRAINTS","candidate_count":1,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":3,"hard_prunes":6,"unknown":1,"exact":0,"proof_obligations":4},
+    {"id":"layer22.commutator-constrained","classification":"EXACT_CONSTRAINT_SATISFACTION","candidate_count":1,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":6,"hard_prunes":21,"unknown":0,"exact":1,"proof_obligations":2},
+    {"id":"layer22.commutator.opaque","classification":"EXACT_CONSTRAINT_SATISFACTION","candidate_count":1,"opaque_id":true,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":6,"hard_prunes":21,"unknown":0,"exact":1,"proof_obligations":2},
+    {"id":"layer22.conjugation-constrained","classification":"EXACT_CONSTRAINT_SATISFACTION","candidate_count":1,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":3,"hard_prunes":39,"unknown":0,"exact":1,"proof_obligations":2},
+    {"id":"layer22.indexed-constraint","classification":"EXACT_CONSTRAINT_SATISFACTION","candidate_count":1,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":1,"hard_prunes":30,"unknown":0,"exact":1,"proof_obligations":0},
+    {"id":"layer22.false-property-negative","classification":"NO_MATCH","candidate_count":0,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":1,"hard_prunes":5,"unknown":0,"exact":0,"proof_obligations":0},
+    {"id":"layer22.unknown-property","classification":"STRUCTURAL_WITH_OPEN_CONSTRAINTS","candidate_count":22,"search_status":"EXHAUSTED_RELATIVE_SPACE","type_compatible":22,"hard_prunes":0,"unknown":22,"exact":0,"proof_obligations":48}
+  ],
+  "scaling": [
+    {"operators":3,"layer21_type_only_compatible":39,"layer22_raw_attempts":51,"branches_avoided_before_child_expansion":30,"hard_prunes":41,"unknown":0,"retained":1,"peak_frontier":1},
+    {"operators":6,"layer21_type_only_compatible":132,"layer22_raw_attempts":174,"branches_avoided_before_child_expansion":96,"hard_prunes":137,"unknown":0,"retained":1,"peak_frontier":1},
+    {"operators":9,"layer21_type_only_compatible":279,"layer22_raw_attempts":369,"branches_avoided_before_child_expansion":198,"hard_prunes":287,"unknown":0,"retained":1,"peak_frontier":1}
+  ],
+  "real_atlas": {
+    "fully_structured_facts": 6,
+    "status": "UNSUPPORTED_CONSTRAINT_LANGUAGE",
+    "notes": "A self-adjoint probe was attempted without inventing missing facts; current real-Atlas structured semantics are not rich enough for this property."
+  },
+  "firewalls": {
+    "discovery_numerics": 0,
+    "runtime_llm_calls": 0,
+    "unrestricted_linear_combinations": false,
+    "scorer_data_entered_search": false
+  },
+  "top_bottlenecks": [
+    "RICHER_STRUCTURED_THEORY_FACTS",
+    "SPACE_AND_REGIME_ENTAILMENT",
+    "SCHEMA_BREADTH_AND_SEARCH_SCALABILITY"
+  ]
+}
