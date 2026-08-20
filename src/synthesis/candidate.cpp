@@ -36,6 +36,7 @@ OperatorCandidate::SemanticEquivalence compare_semantics(const ExpressionPtr& ex
     }
   }
   for (const auto& identity : atlas.identities()) {
+    if (!identity.executable_equality) continue;
     if (identity.left && canonical(identity.left) == canonical(expression)) {
       result.level = static_cast<int>(EquivalenceLevel::IdentityRewrite);
       result.equivalent = true;
@@ -116,19 +117,25 @@ bool is_trivial(const ExpressionPtr& e, const Atlas& a, std::string* reason) {
   if(e->kind==Expression::Kind::Composition&&e->children.size()==2) {
     if(same_ref(e->children[0],Expression::Kind::IdentityOperator)||same_ref(e->children[1],Expression::Kind::IdentityOperator)){if(reason)*reason="identity composition";return true;}
     for(auto* op:a.all()) if(op->definition&&canonical(op->definition)==canonical(e)){if(reason)*reason="algebraically existing operator definition";return true;}
-    for(const auto& i:a.identities()) if(i.left&&canonical(i.left)==canonical(e)&&i.right&&i.right->kind==Expression::Kind::OperatorReference){auto* z=a.find(i.right->value);if(z&&z->definition&&z->definition->kind==Expression::Kind::ZeroOperator){if(reason)*reason="known zero identity";return true;}}
+    for(const auto& i:a.identities()) if(i.executable_equality&&i.left&&canonical(i.left)==canonical(e)&&i.right&&i.right->kind==Expression::Kind::OperatorReference){auto* z=a.find(i.right->value);if(z&&z->definition&&z->definition->kind==Expression::Kind::ZeroOperator){if(reason)*reason="known zero identity";return true;}}
   }
   if(e->kind==Expression::Kind::Addition&&e->children.size()==2&&(e->children[0]->kind==Expression::Kind::ZeroOperator||e->children[1]->kind==Expression::Kind::ZeroOperator)){if(reason)*reason="addition with zero";return true;}
   return false;
 }
+bool ready_for_numerical_verification(const OperatorCandidate& candidate) {
+  const bool proof_path = candidate.verification == VerificationStatus::SymbolicallyVerified ||
+                          candidate.verification == VerificationStatus::FormallyVerified;
+  return candidate.completion_ready && proof_path && !candidate.equivalence.equivalent &&
+         candidate.expression != nullptr && candidate.lineage.source_patterns.size() > 0;
+}
 static std::string id_for(const std::string& form) { unsigned long long h=1469598103934665603ULL; for(unsigned char c:form){h^=c;h*=1099511628211ULL;} std::ostringstream o;o<<"C-"<<std::hex<<h;return o.str(); }
 static bool matches(const OperatorSignature& s,const OperatorRequirements& r) { return s.domain.id==r.domain.id&&s.codomain.id==r.codomain.id&&(r.max_order<0||s.differential_order<=r.max_order)&&s.linear==r.linear&&s.local==r.local; }
 static OperatorCandidate make_candidate(const OperatorSignature& sig,const ExpressionPtr& e,const std::string& source,const std::string& rule) {
-  OperatorCandidate c; c.canonical_form=canonical(e); c.id=id_for(c.canonical_form); c.signature=sig; c.expression=e; c.construction_rule=rule; c.novelty_status="unconfirmed"; c.category="new composition candidate"; c.lineage.source_patterns={source}; c.lineage.construction_rules={rule}; c.score.type_completeness=.3; c.score.structural_fit=.25; c.score.simplicity=.15; c.score.generalization_power=.1; c.score.recoverability=.1; c.score.non_triviality=.1; c.score.identity_compatibility=0; c.score.verification=0; return c;
+  OperatorCandidate c; c.canonical_form=canonical(e); c.id=id_for(c.canonical_form); c.signature=sig; c.expression=e; c.construction_rule=rule; c.novelty_status="unconfirmed"; c.category="research lead"; c.lineage.source_patterns={source}; c.lineage.construction_rules={rule}; c.completion_ready=false; c.completion_blockers={"explicit mathematical property is missing","symbolic/formal proof evidence is missing","independent validity regime is not closed"}; c.score.type_completeness=.3; c.score.structural_fit=.25; c.score.simplicity=.15; c.score.generalization_power=.1; c.score.recoverability=.1; c.score.non_triviality=.1; c.score.identity_compatibility=0; c.score.verification=0; return c;
 }
 CandidateReport CandidateSynthesizer::synthesize(const Atlas& a,const OperatorRequirements& r,const std::string& source) const {
   CandidateReport report; std::set<std::string> seen;
-  for(auto* inner:a.all()) for(auto* outer:a.all()) { auto comp=compose(*outer,*inner,a); if(!comp.valid||!matches(comp.signature,r))continue; auto e=Expression::composition(Expression::ref(outer->id),Expression::ref(inner->id)); auto c=make_candidate(comp.signature,e,source,"typed_composition"); if(!seen.insert(c.canonical_form).second)continue; std::string why; if(is_trivial(e,a,&why)){c.rejection_reason=why;report.rejected.push_back(std::move(c));}else report.accepted.push_back(std::move(c)); }
+  for(auto* inner:a.all()) for(auto* outer:a.all()) { auto comp=compose(*outer,*inner,a); if(!comp.valid||!matches(comp.signature,r))continue; ++report.raw_candidates; auto e=Expression::composition(Expression::ref(outer->id),Expression::ref(inner->id)); auto c=make_candidate(comp.signature,e,source,"typed_composition"); if(!seen.insert(c.canonical_form).second){++report.duplicate_candidates;continue;} std::string why; if(is_trivial(e,a,&why)){c.rejection_reason=why;report.rejected.push_back(std::move(c));}else report.accepted.push_back(std::move(c)); }
   for (auto& candidate : report.accepted) {
     candidate.equivalence = compare_semantics(candidate.expression, a);
     candidate.interestingness = calculate_interestingness(candidate, a, {});
@@ -139,7 +146,8 @@ CandidateReport CandidateSynthesizer::synthesize(const Atlas& a,const OperatorRe
 CandidateReport CandidateSynthesizer::synthesize(const Atlas& a,const patterns::PatternReport& p) const {
   CandidateReport out; std::set<std::string> seen;
   for(const auto& pattern:p.patterns) if(pattern.type==patterns::PatternType::CompositionChain&&pattern.operators.size()==2) {
-    auto* inner=a.find(pattern.operators[0]); auto* outer=a.find(pattern.operators[1]); if(!inner||!outer)continue; auto comp=compose(*outer,*inner,a); if(!comp.valid)continue; auto e=Expression::composition(Expression::ref(outer->id),Expression::ref(inner->id)); auto c=make_candidate(comp.signature,e,pattern.id,"compose roles from typed pattern"); if(!seen.insert(c.canonical_form).second)continue; if(is_trivial(e,a,&c.rejection_reason))out.rejected.push_back(std::move(c)); else {c.lineage.abstractions={"X0 -> X1 -> X2"};out.accepted.push_back(std::move(c));}
+    ++out.raw_candidates;
+    auto* inner=a.find(pattern.operators[0]); auto* outer=a.find(pattern.operators[1]); if(!inner||!outer)continue; auto comp=compose(*outer,*inner,a); if(!comp.valid)continue; auto e=Expression::composition(Expression::ref(outer->id),Expression::ref(inner->id)); auto c=make_candidate(comp.signature,e,pattern.id,"compose roles from typed pattern"); if(!seen.insert(c.canonical_form).second){++out.duplicate_candidates;continue;} if(is_trivial(e,a,&c.rejection_reason))out.rejected.push_back(std::move(c)); else {c.lineage.abstractions={"X0 -> X1 -> X2"};out.accepted.push_back(std::move(c));}
   }
   for (auto& candidate : out.accepted) {
     const auto source = candidate.lineage.source_patterns.empty() ? std::string{} : candidate.lineage.source_patterns.front();

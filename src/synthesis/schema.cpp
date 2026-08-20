@@ -95,6 +95,7 @@ SchemaDiscoveryReport SchemaInducer::induce(const atlas::Atlas& atlas,
 
   std::map<std::string, std::vector<std::string>> factorization_realizations;
   for (const auto& identity : atlas.identities()) {
+    if (!identity.executable_equality) continue;
     if (!identity.left || !identity.right || identity.left->kind != atlas::Expression::Kind::Composition) continue;
     if (identity.right->kind != atlas::Expression::Kind::OperatorReference) continue;
     const auto key = "factorization:" + identity.right->value;

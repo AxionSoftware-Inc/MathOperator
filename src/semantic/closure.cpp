@@ -68,6 +68,7 @@ atlas::Identity derived_identity(const std::string& id, const ExpressionPtr& lef
   identity.id = id; identity.name = "derived consequence"; identity.left = left; identity.right = right;
   identity.assumptions = assumptions; identity.provenance_category = "derived_consequence";
   identity.canonical_form = canonical_identity(identity);
+  identity.executable_equality = true;
   identity.evidence.push_back({id + ".derivation", "derived", rule, "0.13", "2026-08-15", id, "accepted", "", -1});
   return identity;
 }
@@ -121,6 +122,7 @@ ClosureReport ConsequenceClosureEngine::close(const atlas::Atlas& source, const 
   std::map<std::string, std::set<std::string>> conclusions_by_left;
   std::set<std::string> known;
   for (const auto& identity : report.closed_atlas.identities()) {
+    if (!identity.executable_equality) continue;
     const auto canonical = canonical_identity(identity); known.insert(canonical);
     conclusions_by_left[key(identity.left)].insert(key(identity.right));
   }
@@ -184,6 +186,7 @@ ClosureReport ConsequenceClosureEngine::close(const atlas::Atlas& source, const 
   for (int depth = 1; depth <= config.max_depth && static_cast<int>(report.consequences.size()) < config.max_consequences; ++depth) {
     std::vector<std::pair<std::string, std::string>> equalities;
     for (const auto& identity : report.closed_atlas.identities()) {
+      if (!identity.executable_equality) continue;
       std::string left, right; if (reference(identity.left, left) && reference(identity.right, right)) equalities.emplace_back(left, right);
     }
     for (const auto& first : equalities) for (const auto& second : equalities) {
@@ -239,7 +242,7 @@ RealBenchmarkReport ConsequenceClosureEngine::run_real_benchmark_v2(const atlas:
     if (limit++ >= 12) break; const auto* target = identity_by_id(full.closed_atlas, opportunity.target_identity); if (!target) continue;
     WithholdingCase test; test.id = opportunity.id; test.category = opportunity.category; test.difficulty = opportunity.difficulty; test.hidden_target = canonical_identity(*target); test.visible_premises = opportunity.visible_premises; test.assumptions = opportunity.assumptions; test.premise_count = static_cast<int>(opportunity.visible_premises.size());
     const auto visible = full.closed_atlas.without_identities({target->id});
-    for (const auto& identity : visible.identities()) if (canonical_identity(identity) == test.hidden_target) { test.leakage_free = false; ++report.leakage_failures; }
+    for (const auto& identity : visible.identities()) if (identity.executable_equality && canonical_identity(identity) == test.hidden_target) { test.leakage_free = false; ++report.leakage_failures; }
     if (!test.leakage_free) continue;
     test.visible_facts = static_cast<int>(visible.identities().size()); test.attempted = true; ++report.attempts;
     const auto recovered = close(visible, config); test.success = std::any_of(recovered.consequences.begin(), recovered.consequences.end(), [&](const auto& consequence) { return consequence.accepted && consequence.canonical_form == test.hidden_target; });
@@ -247,10 +250,11 @@ RealBenchmarkReport ConsequenceClosureEngine::run_real_benchmark_v2(const atlas:
     test.derivation_rules = {opportunity.category}; report.cases.push_back(std::move(test));
   }
   for (const auto& identity : source.identities()) {
+    if (!identity.executable_equality) continue;
     std::string left_id, right_id; if (!reference(identity.left, left_id) || !reference(identity.right, right_id)) continue;
     const auto* left = source.find(left_id); const auto* right = source.find(right_id); if (!left || !right || left->mathematical_domain == right->mathematical_domain) continue;
     WithholdingCase test; test.id = "cross-domain." + identity.id; test.category = "cross_domain_bridge"; test.difficulty = "hard"; test.hidden_target = canonical_identity(identity); test.visible_premises = {"typed bridge metadata", left->id, right->id}; test.out_of_domain = true; test.premise_count = 2;
-    const auto visible = source.without_identities({identity.id}); for (const auto& visible_identity : visible.identities()) if (canonical_identity(visible_identity) == test.hidden_target) test.leakage_free = false;
+    const auto visible = source.without_identities({identity.id}); for (const auto& visible_identity : visible.identities()) if (visible_identity.executable_equality && canonical_identity(visible_identity) == test.hidden_target) test.leakage_free = false;
     ++report.out_of_domain_attempts; if (!test.leakage_free) { ++report.leakage_failures; continue; }
     test.visible_facts = static_cast<int>(visible.identities().size()); test.attempted = true; ++report.attempts;
     const auto recovered = close(visible, config); test.success = std::any_of(recovered.consequences.begin(), recovered.consequences.end(), [&](const auto& consequence) { return consequence.accepted && consequence.canonical_form == test.hidden_target; });

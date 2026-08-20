@@ -55,6 +55,7 @@ KnownConstructionRegistry KnownConstructionRegistry::from_atlas(const atlas::Atl
   KnownConstructionRegistry registry;
 
   for (const auto& identity : atlas.identities()) {
+    if (!identity.executable_equality) continue;
     if (identity.left && identity.right && identity.left->kind == atlas::Expression::Kind::Composition &&
         identity.right->kind == atlas::Expression::Kind::OperatorReference) {
       registry.add(make("identity." + identity.id, identity.name, "identity_rewrite", identity.left,

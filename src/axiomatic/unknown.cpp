@@ -54,6 +54,7 @@ std::string expression_key(const ExpressionPtr& expression) {
 std::vector<EqualityFact> equality_facts(const atlas::Atlas& atlas) {
   std::vector<EqualityFact> result;
   for (const auto& identity : atlas.identities()) {
+    if (!identity.executable_equality) continue;
     std::string lo, li, ro, ri;
     if (!composition(identity.left, lo, li) || !composition(identity.right, ro, ri)) continue;
     result.push_back({identity.id, lo, li, ro, ri, expression_key(identity.left), expression_key(identity.right), lo == ri && li == ro});
@@ -78,7 +79,9 @@ atlas::Identity equality_identity(const std::string& id, const std::string& left
   atlas::Identity identity; identity.id = id; identity.name = id;
   identity.left = Expression::composition(Expression::ref(left_outer), Expression::ref(left_inner));
   identity.right = Expression::composition(Expression::ref(right_outer), Expression::ref(right_inner));
-  identity.provenance_category = "opaque-controlled-fixture"; return identity;
+  identity.provenance_category = "opaque-controlled-fixture";
+  identity.executable_equality = true;
+  return identity;
 }
 
 atlas::Atlas unseen_fixture(bool near_miss = false) {

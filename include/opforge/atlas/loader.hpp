@@ -4,7 +4,16 @@
 #include <map>
 #include <set>
 namespace opforge::atlas {
-struct AtlasStats { size_t operators{0}, spaces{0}, relations{0}, identities{0}, verified_facts{0}, unverified_facts{0}, disconnected{0}, unsupported_numerical{0}; std::map<std::string,size_t> operators_by_domain, provenance_breakdown, relation_provenance_breakdown, identity_provenance_breakdown; };
+struct AtlasStats {
+  size_t operators{0}, spaces{0}, relations{0}, identities{0};
+  size_t executable_equalities{0}, semantic_statements{0};
+  // verified_facts means numerical/symbolic/formal evidence. Curated/imported
+  // records are reported separately instead of being counted as proofs.
+  size_t verified_facts{0}, partially_verified_facts{0}, unverified_facts{0};
+  size_t disconnected{0}, unsupported_numerical{0};
+  std::map<std::string,size_t> operators_by_domain, provenance_breakdown,
+      relation_provenance_breakdown, identity_provenance_breakdown;
+};
 struct AtlasAuditReport {
   size_t contradictory_identities{0}, impossible_dimension_assumptions{0}, relation_cycles{0}, missing_identity_assumptions{0}, duplicate_relations{0}, bridge_type_mismatches{0};
   size_t invalid_space_operator_compatibility{0}, impossible_variance{0}, degree_mismatches{0}, inconsistent_adjoint_pairs{0}, inconsistent_bridge_direction{0}, accidental_analogue_equivalence{0}, unsupported_infinite_dimensional_claims{0}, duplicate_semantic_facts{0}, circular_generalization{0};

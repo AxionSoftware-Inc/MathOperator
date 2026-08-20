@@ -57,6 +57,10 @@ struct Identity {
   std::vector<std::string> required_structures, applicable_domains;
   std::string canonical_form, provenance_category;
   std::string metric, orientation, boundary, scalar_field, object_grade, curvature, geometry_regime;
+  // Legacy Atlas files use "identity" for equalities as well as analogies,
+  // decompositions, correspondences and other semantic statements. Only a
+  // fully represented equality may enter proof, closure or rewrite engines.
+  bool executable_equality{false};
 };
 struct OperatorRelation { RelationKind kind; std::string target_id, condition, evidence; };
 struct OperatorRecord {

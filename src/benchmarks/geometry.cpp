@@ -1,6 +1,7 @@
 #include "opforge/benchmarks/geometry.hpp"
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <sstream>
 
 namespace opforge::benchmarks {

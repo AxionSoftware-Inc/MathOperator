@@ -1,5 +1,48 @@
 # OpForge — Operator Discovery Engine
 
+## Project freeze documents
+
+Future maintainers and AI agents should begin with
+[CURRENT_STATE.md](CURRENT_STATE.md), then read the durable project-intent
+documents:
+
+1. [CURRENT_STATE.md](CURRENT_STATE.md) — current phase, capability, weaknesses,
+   and required checks;
+2. [VISION.md](VISION.md) — scope, long-term modes, and non-goals;
+3. [ARCHITECTURE.md](ARCHITECTURE.md) — `Theory -> Context -> Judgment ->
+   ProofState` contract;
+4. [ROADMAP.md](ROADMAP.md) — operational Layer 15–20 roadmap and Layer Gates;
+5. [SCIENTIFIC_INVARIANTS.md](SCIENTIFIC_INVARIANTS.md) — non-negotiable
+   epistemic, semantic, discovery, and search invariants;
+6. [DECISIONS.md](DECISIONS.md) — architecture decision records and revisit
+   conditions; and
+7. [BASELINES.md](BASELINES.md) — frozen Phase-0 and Scientific Regression
+   Benchmark v1 measurements;
+8. [reports/layer15_semantic_core.md](reports/layer15_semantic_core.md) —
+   Layer-15 implementation, migration, and gate report; and
+9. [reports/layer16_quotient_search.md](reports/layer16_quotient_search.md) —
+   Layer-16 quotient-search implementation and metrics.
+10. [reports/layer17_bidirectional_reasoning.md](reports/layer17_bidirectional_reasoning.md) —
+    Layer-17 goal-directed/bidirectional reasoning implementation and gates.
+11. [reports/layer18_proof_planning.md](reports/layer18_proof_planning.md) —
+    Layer-18 proof plans, obligation DAGs, evidence gates, replay, and controls.
+12. [reports/layer19_verification.md](reports/layer19_verification.md) —
+    Layer-19 exact verification, falsification, certificates, numerical
+    support isolation, and ResultBundle.
+
+The adversarial architecture review is
+[reports/OPFORGE_ARCHITECTURE_V1_REVIEW.md](reports/OPFORGE_ARCHITECTURE_V1_REVIEW.md).
+
+Current architecture contract: [ARCHITECTURE.md](ARCHITECTURE.md).
+The historical coherent implementation milestone was v0.14 structural analogy;
+the v0.25 files are Atlas/data snapshots and historical open-search artifacts.
+The current governance state is Phase 0 plus Scientific Regression Baseline v1;
+Layers 15–19 are implemented in separate semantic, quotient-search,
+goal-directed, proof-planning, and verification/evidence paths. Layer 19 has a
+narrow internal exact verifier and deterministic numerical-support adapter;
+formal verification remains unavailable. Layer 20 practical-utility
+benchmarking is not implemented.
+
 OpForge is a C++20 research engine for formal operator mapping, structural relation discovery, rediscovery, and verified candidate synthesis. The Operator Atlas is the central mathematical model, not a passive list.
 
 Initial scope: vector analysis and discrete differential operators, with linear algebra as supporting infrastructure. The architecture reserves boundaries for expression graphs, symbolic/numerical verification, counterexample search, AI hypothesis providers, Python bindings, visualization, and a future Lean adapter.
@@ -23,13 +66,16 @@ The Atlas is the central mathematical model and knowledge graph. It is split int
 - `atlas/relations.json` and `atlas/semantic_relations.json` encode composition, duality, factorization, decomposition, projection, continuous/discrete analogy, transform correspondence, annihilation, and invariant-preservation relations.
 - `atlas/identities.json` and `atlas/semantic_identities.json` encode assumptions, domain constraints, canonical forms, provenance, and verification evidence.
 
-The current loaded Atlas contains 59 operators, 28 spaces, 72 relations, and 46 identities across six domains. `./build/opforge atlas validate atlas` is the consistency gate; it currently reports zero dangling relation or identity references. The loader also reports domain and provenance breakdowns so semantic density can be measured without treating record count as research progress.
+The current loaded Atlas contains 98 operators, 47 spaces, 119 relations, and 67 semantic statements across twelve domains. Six are currently marked as machine-executable equality ASTs; the remaining 61 stay as semantic evidence and are excluded from equality closure/rewrite until migrated into the typed proposition model. `./build/opforge atlas validate atlas` is the consistency gate; it currently reports zero dangling relation or identity references. Imported and curated records are tracked as partial evidence, not formal proofs. The loader also reports domain and provenance breakdowns so semantic density can be measured without treating record count as research progress.
 
 The relation ontology is intentionally richer than a formula list. A relation may connect operators to operators or operators to spaces, which allows the Atlas to represent structural bridges such as vector-calculus operators to exterior calculus, continuous operators to discrete analogues, and convolution to Fourier transforms.
 
 The deterministic tests cover `div ∘ grad → Laplacian`, `curl ∘ grad = 0`, `div ∘ curl = 0`, invalid AST/operator references, duplicate operators, dangling relations/identities, space mismatch, regularity failure, JSON round-trip, expanded Atlas consistency, and blind rediscovery regression cases.
 
-The next slice is a fuller seed atlas (curl, 2D rot, Jacobian, Hessian, identities), evidence-derived status transitions, and a schema-backed JSON reader/writer.
+The fuller seed-atlas work described in this historical section is not the
+current next task. Layer 15 is now implemented in the separate semantic-core
+API; its migration and verification details are in
+`reports/layer15_semantic_core.md`.
 
 Structural Pattern Detection Engine v0.1 is now available in `include/opforge/patterns/analyzer.hpp`. It builds a typed composition graph, discovers composition chains, zero compositions, name-independent differential-complex candidates, abstract operator families, and terminal structural gaps. Every result carries evidence and a deterministic trace; no operator names are special-cased and no candidate operators are generated.
 
@@ -64,7 +110,39 @@ The first open-ended campaign is reproducible through the CLI:
   --report /tmp/opforge-open-final-report.txt
 ```
 
-The checked-in result is [reports/open_search_v0.25.txt](reports/open_search_v0.25.txt). The campaign ran with AI disabled, target `none`, and a frozen curated Atlas. The run produced 287 patterns, 10 cross-domain matches, 41 gaps, 170 candidates, 42 rejected candidates, 48 false-interest records, 30 numerical experiments, and 4 surviving candidates. These are Atlas-derived structural candidates, not novelty claims.
+The checked-in result is [reports/open_search_v0.25.txt](reports/open_search_v0.25.txt). It is a historical open-search snapshot from before the current search/proof separation; its numerical experiments must not be read as evidence produced by the current default search contract. These are Atlas-derived structural candidates, not novelty claims.
+
+## Current search/proof contract
+
+The current default `discover` path is structural-only: it may use typed Atlas data,
+relations, identities, schemas, closure, analogies, and residuals, but it does not
+call the numerical executor. Candidate generation is bounded and reports how many
+leads were pruned. `--numeric-diagnostics` is an explicit backend QA mode. The
+`--verify-numerics` flag enables only the proof-stage route. The current conservative
+gate refuses every
+candidate that lacks a complete expression, closed assumptions, symbolic/formal
+evidence, and a non-equivalence decision. As of this checkpoint, no generated
+candidate satisfies that gate, so proof-stage numerical experiments correctly remain
+zero.
+
+## Scientific regression baseline v1
+
+The current target-blind regression suite is exposed through:
+
+```bash
+./build/opforge benchmark blind_rediscovery atlas
+./build/opforge benchmark scaling atlas --medium-operators 50
+./build/opforge benchmark open_search atlas
+```
+
+The blind suite masks target operators, identities, relations, and descriptive metadata
+before structural discovery. Only the external scorer knows the hidden target. MISS is
+an accepted scientific outcome; leakage, false positives, or numerical experiments in
+this suite are failures. The older `HistoricalRediscovery` and fixed-ID composition
+helpers remain in the source for historical compatibility but are legacy/demo evidence,
+not the current blind baseline. Partial recovery is not full recall. The frozen
+results are recorded in
+`reports/scientific_regression_baseline_v1.md`.
 
 ## Semantic Equivalence, Interestingness, and Oracles v0.3
 
@@ -141,6 +219,8 @@ The CLI now accepts campaign modes `blind_rediscovery`, `structural_exploration`
   --report /tmp/opforge-v0.6-lead-report.txt
 ```
 
-The validation suite runs four leakage-checked benchmark classes at easy/medium/hard difficulty: hidden operator recovery, hidden higher-level schema, hidden correction law, and hidden structural bridge. The checked-in report is [scientific_validation_v0.6.txt](/Users/macbookpro/Documents/Operator/reports/scientific_validation_v0.6.txt). It evaluates all 14 leads, records 0 leakage events, reports easy/medium/hard misses honestly, retains 0 serious candidates, and confirms that ordinary composition generation remains bounded at 169 candidates.
+The validation suite runs four leakage-checked benchmark classes at easy/medium/hard difficulty: hidden operator recovery, hidden higher-level schema, hidden correction law, and hidden structural bridge. The checked-in report is [scientific_validation_v0.6.txt](reports/scientific_validation_v0.6.txt). It is a historical baseline; the current structural-search contract is documented above and in [ARCHITECTURE.md](/Users/user2/Documents/MathOperator/ARCHITECTURE.md).
 
-The current milestone deliberately does not claim novelty, formal Lean proofs, or AI-generated mathematics. It establishes a denser, auditable semantic substrate and a repeatable rediscovery/evaluation protocol for those later layers.
+The historical v0.6 milestone deliberately did not claim novelty, formal Lean
+proofs, or AI-generated mathematics. The current state and next task are frozen
+in [CURRENT_STATE.md](CURRENT_STATE.md) and [ROADMAP.md](ROADMAP.md).

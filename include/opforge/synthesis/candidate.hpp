@@ -33,10 +33,17 @@ struct OperatorCandidate {
   Score score;
   InterestingnessScore interestingness;
   std::string semantic_category;
+  // Search may produce a lead, but only an explicitly completed and
+  // symbolically/formally established candidate may enter numeric proof.
+  bool completion_ready{false};
+  std::vector<std::string> completion_blockers;
   struct SemanticEquivalence { int level{0}; bool equivalent{false}; std::string matched_id, explanation; std::vector<std::string> assumptions; } equivalence;
   CandidateLineage lineage;
 };
-struct CandidateReport { std::vector<OperatorCandidate> accepted, rejected; };
+struct CandidateReport {
+  std::vector<OperatorCandidate> accepted, rejected;
+  size_t raw_candidates{0}, duplicate_candidates{0};
+};
 enum class EquivalenceLevel { Syntactic, ExactAST=Syntactic, Canonical, CanonicalAlgebraic=Canonical, Symbolic, IdentityRewrite, Numerical, NumericalUnderAssumptions=Numerical, Structural, StructurallyRelated=Structural, OperatorFamily, DecompositionComponent, Unknown };
 
 class CandidateSynthesizer {
@@ -49,6 +56,7 @@ public:
 };
 std::string canonical(const atlas::ExpressionPtr& expression);
 bool is_trivial(const atlas::ExpressionPtr& expression, const atlas::Atlas& atlas, std::string* reason=nullptr);
+bool ready_for_numerical_verification(const OperatorCandidate& candidate);
 EquivalenceLevel classify_equivalence(const atlas::ExpressionPtr& left, const atlas::ExpressionPtr& right, const atlas::Atlas& atlas);
 OperatorCandidate::SemanticEquivalence compare_semantics(const atlas::ExpressionPtr&, const atlas::Atlas&);
 InterestingnessScore calculate_interestingness(const OperatorCandidate&, const atlas::Atlas&, const patterns::PatternReport&);

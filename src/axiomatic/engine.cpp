@@ -60,6 +60,7 @@ bool is_zero(const ExpressionPtr& expression, const atlas::Atlas& atlas) {
 std::vector<CompositionFact> facts(const atlas::Atlas& atlas) {
   std::vector<CompositionFact> result;
   for (const auto& identity : atlas.identities()) {
+    if (!identity.executable_equality) continue;
     std::string outer, inner;
     if (!composition(identity.left, outer, inner)) continue;
     result.push_back({identity.id, outer, inner, expression_key(identity.right), is_zero(identity.right, atlas)});
@@ -103,6 +104,7 @@ atlas::Identity benchmark_identity(const std::string& id, ExpressionPtr left, Ex
   atlas::Identity identity;
   identity.id = id; identity.name = id; identity.left = std::move(left); identity.right = std::move(right);
   identity.provenance_category = "v0.10-controlled-benchmark";
+  identity.executable_equality = true;
   return identity;
 }
 

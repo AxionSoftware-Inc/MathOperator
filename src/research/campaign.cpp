@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <chrono>
 #include <fstream>
+#include <map>
 #include <set>
 #include <sstream>
 
@@ -91,7 +92,7 @@ static const std::vector<std::pair<const char*, std::vector<std::string> Researc
     {"unresolved", &ResearchMemory::unresolved_questions}};
 
 static bool write_memory(std::ofstream& out, const ResearchMemory& memory) {
-  out << "OPFORGE_MEMORY_V0.2\n";
+  out << "OPFORGE_MEMORY_V0.3\n";
   for (const auto& [name, member] : memory_buckets) {
     for (const auto& value : memory.*member) out << name << "|" << value << "\n";
   }
@@ -123,12 +124,19 @@ bool ResearchOrchestrator::save_checkpoint(const std::string& path, const Campai
                                            const ResearchMemory& memory) const {
   std::ofstream out(path);
   if (!out) return false;
-  out << "OPFORGE_CHECKPOINT_V0.2\n"
+  out << "OPFORGE_CHECKPOINT_V0.3\n"
       << "campaign|" << state.id << "\n"
       << "cycle|" << state.cycle << "\n"
       << "actions|" << state.actions_executed << "\n"
       << "mode|" << to_string(state.mode) << "\n"
-      << "atlas_snapshot|" << state.atlas_snapshot << "\n";
+      << "atlas_snapshot|" << state.atlas_snapshot << "\n"
+      << "search_contract|" << (state.search_contract_initialized ? "initialized" : "unset") << "\n"
+      << "numerical_verification|" << (state.numerical_verification_enabled ? "true" : "false") << "\n"
+      << "numeric_diagnostics|" << (state.numeric_diagnostics_enabled ? "true" : "false") << "\n"
+      << "max_candidate_leads|" << state.max_candidate_leads << "\n"
+      << "max_composition_checks|" << state.pattern_budget.max_composition_checks << "\n"
+      << "max_graph_edges|" << state.pattern_budget.max_graph_edges << "\n"
+      << "max_patterns|" << state.pattern_budget.max_patterns << "\n";
   return write_memory(out, memory);
 }
 
@@ -139,7 +147,7 @@ std::pair<CampaignState, ResearchMemory> ResearchOrchestrator::load_checkpoint(c
   std::string line;
   bool memory_section = false;
   while (std::getline(in, line)) {
-    if (line == "OPFORGE_MEMORY_V0.1" || line == "OPFORGE_MEMORY_V0.2") {
+    if (line == "OPFORGE_MEMORY_V0.1" || line == "OPFORGE_MEMORY_V0.2" || line == "OPFORGE_MEMORY_V0.3") {
       memory_section = true;
       continue;
     }
@@ -159,6 +167,20 @@ std::pair<CampaignState, ResearchMemory> ResearchOrchestrator::load_checkpoint(c
       state.actions_executed = std::stoi(value);
     } else if (key == "atlas_snapshot") {
       state.atlas_snapshot = value;
+    } else if (key == "search_contract") {
+      state.search_contract_initialized = value == "initialized";
+    } else if (key == "numerical_verification") {
+      state.numerical_verification_enabled = value == "true";
+    } else if (key == "numeric_diagnostics") {
+      state.numeric_diagnostics_enabled = value == "true";
+    } else if (key == "max_candidate_leads") {
+      state.max_candidate_leads = static_cast<size_t>(std::stoul(value));
+    } else if (key == "max_composition_checks") {
+      state.pattern_budget.max_composition_checks = static_cast<size_t>(std::stoul(value));
+    } else if (key == "max_graph_edges") {
+      state.pattern_budget.max_graph_edges = static_cast<size_t>(std::stoul(value));
+    } else if (key == "max_patterns") {
+      state.pattern_budget.max_patterns = static_cast<size_t>(std::stoul(value));
     } else if (key == "mode") {
       if (value == "rediscovery") state.mode = CampaignMode::Rediscovery;
       else if (value == "blind_rediscovery") state.mode = CampaignMode::BlindRediscovery;
@@ -214,6 +236,51 @@ void merge_candidate(std::vector<synthesis::OperatorCandidate>& candidates,
   }
 }
 
+std::string frontier_bucket(const synthesis::OperatorCandidate& candidate) {
+  const auto& signature = candidate.signature;
+  return candidate.construction_rule + "|" + signature.domain.id + "->" + signature.codomain.id +
+         "|order=" + std::to_string(signature.differential_order) +
+         "|in=" + std::to_string(static_cast<int>(signature.input_kind)) +
+         "|out=" + std::to_string(static_cast<int>(signature.output_kind)) +
+         "|linear=" + (signature.linear ? "1" : "0") +
+         "|local=" + (signature.local ? "1" : "0");
+}
+
+synthesis::CandidateReport bounded_candidate_frontier(const synthesis::CandidateReport& generated,
+                                                       size_t limit, int& pruned) {
+  if (generated.accepted.size() <= limit) return generated;
+  synthesis::CandidateReport result;
+  result.rejected = generated.rejected;
+  if (limit == 0) {
+    pruned += static_cast<int>(generated.accepted.size());
+    return result;
+  }
+  std::map<std::string, std::vector<synthesis::OperatorCandidate>> buckets;
+  for (const auto& candidate : generated.accepted) buckets[frontier_bucket(candidate)].push_back(candidate);
+  for (auto& [_, bucket] : buckets) {
+    std::sort(bucket.begin(), bucket.end(), [](const auto& left, const auto& right) {
+      if (left.score.total() != right.score.total()) return left.score.total() > right.score.total();
+      if (left.interestingness.total() != right.interestingness.total())
+        return left.interestingness.total() > right.interestingness.total();
+      return left.canonical_form < right.canonical_form;
+    });
+  }
+  size_t depth = 0;
+  while (result.accepted.size() < limit) {
+    bool added = false;
+    for (auto& [_, bucket] : buckets) {
+      if (depth >= bucket.size()) continue;
+      result.accepted.push_back(bucket[depth]);
+      added = true;
+      if (result.accepted.size() == limit) break;
+    }
+    if (!added) break;
+    ++depth;
+  }
+  pruned += static_cast<int>(generated.accepted.size() - result.accepted.size());
+  return result;
+}
+
 void append_unique(std::vector<std::string>& values, const std::string& value) {
   if (std::find(values.begin(), values.end(), value) == values.end()) values.push_back(value);
 }
@@ -253,6 +320,7 @@ std::string false_interest_reason(const atlas::Atlas& atlas,
   if (synthesis::is_trivial(candidate.expression, atlas, &reason)) return reason;
   if (candidate.expression && candidate.expression->kind == atlas::Expression::Kind::Composition) {
     for (const auto& identity : atlas.identities()) {
+      if (!identity.executable_equality) continue;
       if (identity.left && synthesis::canonical(identity.left) == candidate.canonical_form &&
           identity.right && identity.right->kind == atlas::Expression::Kind::OperatorReference &&
           atlas.find(identity.right->value)) {
@@ -343,6 +411,11 @@ CampaignReport ResearchOrchestrator::run(const atlas::Atlas& atlas, const Campai
   if (report.state.id.empty()) report.state.id = config.campaign_id;
   report.state.mode = config.mode;
   report.state.atlas_snapshot = config.atlas_snapshot;
+  report.state.search_contract_initialized = true;
+  report.state.numerical_verification_enabled = config.enable_numerical_verification;
+  report.state.numeric_diagnostics_enabled = config.run_numeric_diagnostics;
+  report.state.max_candidate_leads = config.max_candidate_leads;
+  report.state.pattern_budget = config.pattern_budget;
   report.epistemic_status = "structural_exploration_only";
   if (config.mode == CampaignMode::DeepOpenDiscovery) {
     DeepDiscoveryConfig deep_config;
@@ -399,7 +472,7 @@ CampaignReport ResearchOrchestrator::run(const atlas::Atlas& atlas, const Campai
   report.residual_benchmark = benchmarks::ResidualDrivenBenchmark{}.run(atlas);
   report.successful_repairs = report.residual_benchmark.repaired ? 1 : 0;
   report.schema_benchmark = benchmarks::SchemaCompressionBenchmark{}.run(atlas);
-  const auto initial_patterns = patterns::PatternAnalyzer{}.analyze(atlas);
+  const auto initial_patterns = patterns::PatternAnalyzer{}.analyze(atlas, config.pattern_budget);
   const auto initial_meta = patterns::MetaPatternAnalyzer{}.analyze(atlas, initial_patterns);
   report.meta_patterns = initial_meta.meta_patterns;
   report.predicted_roles = initial_meta.predictions;
@@ -413,7 +486,7 @@ CampaignReport ResearchOrchestrator::run(const atlas::Atlas& atlas, const Campai
   int experiment_counter = 0;
   while (report.state.cycle < config.budget.max_cycles && !report.state.stopped &&
          report.state.actions_executed < config.budget.max_actions) {
-    const auto patterns = patterns::PatternAnalyzer{}.analyze(atlas);
+    const auto patterns = patterns::PatternAnalyzer{}.analyze(atlas, config.pattern_budget);
     const auto meta_report = patterns::MetaPatternAnalyzer{}.analyze(atlas, patterns);
     report.meta_patterns = meta_report.meta_patterns;
     report.predicted_roles = meta_report.predictions;
@@ -473,7 +546,13 @@ CampaignReport ResearchOrchestrator::run(const atlas::Atlas& atlas, const Campai
       add_action(ActionType::TestCommutator, report.structure_analysis.commutators.front().id, "typed AB-BA probe", 1.1, 0.5);
 
     const auto generated = synthesis::CandidateSynthesizer{}.synthesize(atlas, patterns);
-    for (auto candidate : generated.accepted) {
+    auto bounded_generated = bounded_candidate_frontier(generated, config.max_candidate_leads,
+                                                        report.pruned_candidates);
+    if (generated.accepted.size() > bounded_generated.accepted.size()) {
+      report.memory.remember(report.memory.decisions,
+                             "candidate lead budget retained a deterministic stratified structural frontier; search is truncated, not complete");
+    }
+    for (auto candidate : bounded_generated.accepted) {
       candidate.category = category_for(candidate);
       const auto semantic = synthesis::compare_semantics(candidate.expression, atlas);
       if (semantic.equivalent) {
@@ -496,7 +575,7 @@ CampaignReport ResearchOrchestrator::run(const atlas::Atlas& atlas, const Campai
       report.memory.remember(report.memory.generated_candidates, candidate.id);
       merge_candidate(report.candidates.accepted, std::move(candidate));
     }
-    for (auto candidate : generated.rejected) {
+    for (auto candidate : bounded_generated.rejected) {
       candidate.category = category_for(candidate);
       report.memory.remember(report.memory.rejected_candidates, candidate.id);
       const auto false_interest = candidate.id + ":" + candidate.rejection_reason;
@@ -522,10 +601,15 @@ CampaignReport ResearchOrchestrator::run(const atlas::Atlas& atlas, const Campai
       return numerically_applicable(left) > numerically_applicable(right);
     });
     const auto top_count = std::min<size_t>(10, candidates.size());
-    for (size_t index = 0; index < top_count; ++index) {
+    if (config.enable_numerical_verification) for (size_t index = 0; index < top_count; ++index) {
       auto& candidate = candidates[index];
       if (already_evaluated(report, candidate.id)) continue;
       if (report.state.actions_executed >= config.budget.max_actions) break;
+      if (!synthesis::ready_for_numerical_verification(candidate)) {
+        report.memory.remember(report.memory.unresolved_questions,
+                               candidate.id + ": numeric verification blocked until completion and symbolic/formal proof evidence exist");
+        continue;
+      }
       add_action(ActionType::EvaluateCandidate, candidate.id, "top structural score", candidate.score.total(), 1.0);
       auto evaluation = CandidateEvaluationEngine{}.evaluate(atlas, candidate, {}, nullptr,
                                                               {std::max(1, config.budget.max_experiments - experiment_counter),
@@ -607,6 +691,10 @@ CampaignReport ResearchOrchestrator::run(const atlas::Atlas& atlas, const Campai
         if (dossier_quality(dossier) > dossier_quality(*weakest)) *weakest = std::move(dossier);
       }
     }
+    if (!config.enable_numerical_verification && !generated.accepted.empty()) {
+      report.memory.remember(report.memory.unresolved_questions,
+                             "numeric verification intentionally disabled during structural search");
+    }
 
     report.residual_cluster_details = ResidualAnalyzer{}.cluster(report.residual_objects);
     report.residual_clusters = static_cast<int>(report.residual_cluster_details.size());
@@ -651,12 +739,21 @@ CampaignReport ResearchOrchestrator::run(const atlas::Atlas& atlas, const Campai
       report.state.stopped = true;
       report.memory.remember(report.memory.unresolved_questions, "campaign runtime budget exhausted");
     }
-    if (generated.accepted.empty()) break;
+    if (bounded_generated.accepted.empty()) break;
   }
 
   report.state.stopped = true;
   report.numerical_experiments = experiment_counter;
-  report.geometry_benchmark = benchmarks::GeometryBenchmarkSuite{}.run(atlas, 17);
+  // A proof-stage request does not authorize global numerical probing. The
+  // geometry suite runs only for explicit backend diagnostics or after at
+  // least one candidate has passed the completion/proof gate.
+  if (config.run_numeric_diagnostics || report.numerical_experiments > 0) {
+    report.geometry_benchmark = benchmarks::GeometryBenchmarkSuite{}.run(atlas, 17);
+    report.geometry_diagnostics_ran = true;
+  } else {
+    report.memory.remember(report.memory.unresolved_questions,
+                           "numeric diagnostics intentionally skipped in structural search");
+  }
   if (report.actions.size() + 4 <= static_cast<size_t>(config.budget.max_actions)) {
     report.actions.push_back({"geometry-ontology", "geometry-catalog", "typed regime compatibility", ActionType::InspectGeometry, 1.3, 0.4, 3.25, {}});
     report.actions.push_back({"boundary-stress", "boundary-regimes", "local-vs-global behavior", ActionType::TestBoundary, 1.25, 0.5, 2.5, {"geometry-ontology"}});
@@ -673,7 +770,8 @@ CampaignReport ResearchOrchestrator::run(const atlas::Atlas& atlas, const Campai
   for (const auto& action : report.actions) action_types.push_back(to_string(action.type));
   report.scientific = ScientificValidator{}.run(
       atlas, report.scientific.baseline, report.schema_discovery, report.structure_analysis,
-      report.residual_objects, report.residual_cluster_details, action_types);
+      report.residual_objects, report.residual_cluster_details, action_types,
+      report.numerical_experiments > 0);
   if (!report.evaluations.empty()) {
     report.memory.remember(report.memory.unresolved_questions,
                            "formal proof and domain-specific property oracles remain unresolved");
@@ -728,6 +826,7 @@ std::string ResearchOrchestrator::report_text(const CampaignReport& report) cons
       << "Cross-domain patterns: " << report.cross_domain_patterns.size() << "\n"
       << "Structural gaps: " << report.structural_gaps.size() << "\n"
       << "Candidates generated: " << report.memory.generated_candidates.size() << "\n"
+      << "Candidates pruned by budget: " << report.pruned_candidates << "\n"
       << "Candidates rejected: " << report.memory.rejected_candidates.size() << "\n"
       << "Known-equivalent: " << report.known_equivalent << "\n"
       << "Known constructions: " << report.known_constructions << "\n"
@@ -745,13 +844,17 @@ std::string ResearchOrchestrator::report_text(const CampaignReport& report) cons
       << "Schema benchmark: " << report.schema_benchmark.id
       << " | inferred=" << (report.schema_benchmark.inferred ? "yes" : "no")
       << " | compression=" << report.schema_benchmark.compression_gain << "\n"
-      << "Geometry regimes: " << report.geometry_benchmark.regimes.size()
-      << " | bridges=" << report.geometry_benchmark.bridges.size()
-      << " | hard=" << report.geometry_benchmark.hard_recovered << "/" << report.geometry_benchmark.hard_total
-      << " | convergence=" << report.geometry_benchmark.convergence.size() << "\n"
-      << "Numerical truth records: " << report.geometry_benchmark.numerical_truth.records.size()
-      << " | curved executions=" << report.geometry_benchmark.curved_executions.size()
-      << " | coordinate consistency=" << (report.geometry_benchmark.coordinate_consistency.passed ? "passed" : "failed") << "\n"
+      << "Geometry/numeric diagnostics: " << (report.geometry_diagnostics_ran ? "run" : "not_run") << "\n";
+  if (report.geometry_diagnostics_ran) {
+    out << "Geometry regimes: " << report.geometry_benchmark.regimes.size()
+        << " | bridges=" << report.geometry_benchmark.bridges.size()
+        << " | hard=" << report.geometry_benchmark.hard_recovered << "/" << report.geometry_benchmark.hard_total
+        << " | convergence=" << report.geometry_benchmark.convergence.size() << "\n"
+        << "Numerical truth records: " << report.geometry_benchmark.numerical_truth.records.size()
+        << " | curved executions=" << report.geometry_benchmark.curved_executions.size()
+        << " | coordinate consistency=" << (report.geometry_benchmark.coordinate_consistency.passed ? "passed" : "failed") << "\n";
+  }
+  out
       << "Unresolved questions: " << report.unresolved.size() << "\n"
       << "Epistemic status: " << report.epistemic_status << "\n";
   out << "Top candidate dossiers:\n";
@@ -845,7 +948,8 @@ std::string ResearchOrchestrator::report_text(const CampaignReport& report) cons
   out << "Lead audits:\n";
   for (const auto& audit : report.lead_audits) out << "- " << audit << "\n";
   out << "Correction candidates: " << report.correction_candidates.size() << "\n";
-  out << report.geometry_benchmark.id << ":\n" << benchmarks::GeometryBenchmarkSuite{}.export_text(report.geometry_benchmark);
+  if (report.geometry_diagnostics_ran)
+    out << report.geometry_benchmark.id << ":\n" << benchmarks::GeometryBenchmarkSuite{}.export_text(report.geometry_benchmark);
   out << "Scientific validation:\n" << ScientificValidator{}.export_text(report.scientific);
   return out.str();
 }
@@ -875,6 +979,7 @@ std::string ResearchOrchestrator::report_json(const CampaignReport& report) cons
       << ",\"cross_domain_patterns\":" << report.cross_domain_patterns.size()
       << ",\"structural_gaps\":" << report.structural_gaps.size()
       << ",\"candidates_generated\":" << report.memory.generated_candidates.size()
+      << ",\"candidates_pruned\":" << report.pruned_candidates
       << ",\"candidates_rejected\":" << report.memory.rejected_candidates.size()
       << ",\"known_equivalent\":" << report.known_equivalent
       << ",\"known_constructions\":" << report.known_constructions
@@ -890,6 +995,7 @@ std::string ResearchOrchestrator::report_json(const CampaignReport& report) cons
       << ",\"residual_benchmark_repaired\":" << (report.residual_benchmark.repaired ? "true" : "false")
       << ",\"schema_benchmark_inferred\":" << (report.schema_benchmark.inferred ? "true" : "false")
       << ",\"schema_compression_gain\":" << report.schema_benchmark.compression_gain
+      << ",\"geometry_diagnostics_ran\":" << (report.geometry_diagnostics_ran ? "true" : "false")
       << ",\"geometry_regimes\":" << report.geometry_benchmark.regimes.size()
       << ",\"geometry_bridges\":" << report.geometry_benchmark.bridges.size()
       << ",\"geometry_hard_recovered\":" << report.geometry_benchmark.hard_recovered
@@ -897,7 +1003,7 @@ std::string ResearchOrchestrator::report_json(const CampaignReport& report) cons
       << ",\"geometry_leakage\":" << report.geometry_benchmark.leakage
       << ",\"numerical_truth_records\":" << report.geometry_benchmark.numerical_truth.records.size()
       << ",\"curved_executions\":" << report.geometry_benchmark.curved_executions.size()
-      << ",\"coordinate_consistency\":" << (report.geometry_benchmark.coordinate_consistency.passed ? "true" : "false")
+      << ",\"coordinate_consistency\":" << (report.geometry_diagnostics_ran ? (report.geometry_benchmark.coordinate_consistency.passed ? "true" : "false") : "null")
       << ",\"boundary_policy_discrepancy\":" << report.geometry_benchmark.boundary_policy_discrepancy
       << ",\"deep_campaigns\":" << report.deep_discovery.campaigns.size()
       << ",\"deep_external_check_candidates\":" << report.deep_discovery.external_check_candidates

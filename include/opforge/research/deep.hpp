@@ -1,7 +1,6 @@
 #pragma once
 
 #include "opforge/atlas/geometry.hpp"
-#include "opforge/benchmarks/geometry.hpp"
 #include "opforge/patterns/meta.hpp"
 #include "opforge/research/structure_analysis.hpp"
 #include "opforge/synthesis/registry.hpp"
@@ -17,7 +16,7 @@ enum class DeepLeadStatus { Observation, StructuralLead, SupportedLead, DeepRese
 enum class LeadClassification { SimpleRecombination, KnownExpressionNewNotation, HigherOrderAbstraction, PredictiveAbstraction, CorrectionGeneralization, NewStructuralHypothesis, Unresolved };
 
 struct DeepBaseline {
-  std::string id{"v0.9-deep-discovery-baseline"}, atlas_digest, registry_digest, ontology_digest, numerical_backend{"cpu-reference-v0.8"};
+  std::string id{"v0.9-deep-discovery-baseline"}, atlas_digest, registry_digest, ontology_digest, numerical_backend{"isolated-proof-stage-only"};
   int operators{0}, spaces{0}, identities{0}, relations{0}, geometry_regimes{0};
   std::vector<std::string> grammar, oracle_configuration, scoring_configuration;
   bool frozen{true};
@@ -26,7 +25,7 @@ struct LeadEvidence { std::string channel, source, detail; bool independent{fals
 struct DeepLead {
   std::string id, formal_definition, status_reason, numerical_trust{"not_applicable"}, residual_classification{"unresolved"}, utility_hypothesis, main_weakness;
   DeepLeadStatus status{DeepLeadStatus::Observation}; LeadClassification classification{LeadClassification::Unresolved};
-  int depth{0}, stagnation_actions{0}; double score{0};
+  int depth{0}, stagnation_actions{0}, independent_structural_realizations{0}; double score{0};
   std::vector<std::string> genealogy, assumptions, geometry_regimes, boundary_regimes, regularity_regimes, alternative_explanations, next_decisive_tests;
   std::vector<LeadEvidence> evidence;
   std::vector<std::string> counterexample_attempts, prospective_predictions, corrections;

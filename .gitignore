@@ -1,0 +1,13 @@
+# Generated build trees and platform-specific CMake caches
+/build/
+/build-asan/
+/cmake-build-*/
+
+# Local IDE and OS metadata
+.DS_Store
+.idea/
+.vscode/
+
+# Local campaign artifacts
+*.checkpoint
+*.checkpoint.txt

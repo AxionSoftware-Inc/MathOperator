@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/Users/macbookpro/Documents/Operator/build-asan/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

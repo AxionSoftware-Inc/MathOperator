@@ -137,10 +137,12 @@ BaselineSnapshot ScientificValidator::freeze_baseline(
     const patterns::MetaPatternReport& meta, const synthesis::SchemaDiscoveryReport& schemas) const {
   BaselineSnapshot baseline;
   baseline.id = "v0.6-scientific-baseline";
-  baseline.atlas_version = "atlas-59-operators-v0.5";
   baseline.operators = static_cast<int>(atlas.all().size());
   baseline.spaces = static_cast<int>(atlas.spaces().size());
   baseline.identities = static_cast<int>(atlas.identities().size());
+  baseline.atlas_version = "atlas-operators-" + std::to_string(baseline.operators) +
+                           "-spaces-" + std::to_string(baseline.spaces) +
+                           "-identities-" + std::to_string(baseline.identities);
   baseline.meta_patterns = static_cast<int>(meta.meta_patterns.size());
   baseline.schemas = static_cast<int>(schemas.schemas.size());
   for (const auto* op : atlas.all()) baseline.relations += static_cast<int>(op->relations.size());
@@ -158,7 +160,7 @@ ScientificValidationReport ScientificValidator::run(
     const atlas::Atlas& atlas, const BaselineSnapshot& baseline,
     const synthesis::SchemaDiscoveryReport& schemas, const StructureAnalysisReport& structure,
     const std::vector<ResidualObject>& residuals, const std::vector<ResidualCluster>& residual_clusters,
-    const std::vector<std::string>& action_types) const {
+    const std::vector<std::string>& action_types, bool numerical_verification_enabled) const {
   ScientificValidationReport report;
   report.baseline = baseline;
   (void)structure;
@@ -183,18 +185,24 @@ ScientificValidationReport ScientificValidator::run(
     dossier.participating_domains = schema.participating_spaces;
     dossier.known_constructions = schema.kind == synthesis::SchemaKind::Factorization ? schema.evidence : std::vector<std::string>{};
     dossier.known_equivalent = schema.kind == synthesis::SchemaKind::Factorization;
-    dossier.counterexample_attempts = 5;
-    dossier.numerical_resolutions = 3;
-    dossier.representations_checked = 2;
+    dossier.counterexample_attempts = numerical_verification_enabled ? 5 : 0;
+    dossier.numerical_resolutions = numerical_verification_enabled ? 3 : 0;
+    dossier.representations_checked = numerical_verification_enabled ? 2 : 0;
     dossier.rewrites_checked = 3;
-    dossier.numerical_status = schema.kind == synthesis::SchemaKind::ParameterizedOperator ? "not_applicable" : "multiresolution_stress_completed";
-    dossier.counterexample_status = schema.kind == synthesis::SchemaKind::Factorization ? "known_construction" : "no_executable_counterexample_property";
-    dossier.falsification_strength = (0.7 + 0.7 + 0.6 + 0.6 + 0.5 + 0.5) / 6.0;
-    dossier.failed_regimes = {"boundary-sensitive backend", "dimension variation", "non-smooth backend"};
+    dossier.numerical_status = !numerical_verification_enabled ? "not_run_in_structural_search" :
+                                (schema.kind == synthesis::SchemaKind::ParameterizedOperator ? "not_applicable" : "multiresolution_stress_completed");
+    dossier.counterexample_status = !numerical_verification_enabled ? "not_run_in_structural_search" :
+                                    (schema.kind == synthesis::SchemaKind::Factorization ? "known_construction" : "no_executable_counterexample_property");
+    dossier.falsification_strength = numerical_verification_enabled ? (0.7 + 0.7 + 0.6 + 0.6 + 0.5 + 0.5) / 6.0 : 0.25;
+    dossier.failed_regimes = numerical_verification_enabled
+                                 ? std::vector<std::string>{"boundary-sensitive backend", "dimension variation", "non-smooth backend"}
+                                 : std::vector<std::string>{};
     dossier.unresolved_dependencies = schema.kind == synthesis::SchemaKind::ParameterizedOperator
                                           ? std::vector<std::string>{"parameter identity constraints", "independent numerical realization"}
                                           : std::vector<std::string>{"formal property oracle", "external novelty verification"};
-    dossier.validity_regions = {"typed Atlas regime", "finite-difference regime where supported"};
+    dossier.validity_regions = numerical_verification_enabled
+                                   ? std::vector<std::string>{"typed Atlas regime", "finite-difference regime where supported"}
+                                   : std::vector<std::string>{"typed Atlas regime only; numerical validity not tested"};
     dossier.alternative_explanations = {"known construction or metadata-induced abstraction", "insufficient ontology granularity"};
     dossier.next_experiments = {"independent representation evaluation", "stronger property oracle", "hard benchmark replay"};
     dossier.evidence_history = {"inferred", "structurally_supported", "adversarially_tested"};
@@ -216,21 +224,20 @@ ScientificValidationReport ScientificValidator::run(
       dossier.outcome_history.push_back("unresolved pending independent validation");
     else if (dossier.outcome == LeadOutcome::KnownConstruction || dossier.outcome == LeadOutcome::TrivialAbstraction)
       dossier.outcome_history.push_back("downgraded after semantic attack");
-    if (dossier.outcome == LeadOutcome::KnownConstruction || dossier.outcome == LeadOutcome::TrivialAbstraction ||
-        dossier.outcome == LeadOutcome::UnderSpecified) {
+    if (dossier.outcome == LeadOutcome::KnownConstruction || dossier.outcome == LeadOutcome::TrivialAbstraction) {
       ++report.eliminated_leads;
-    } else if (dossier.outcome == LeadOutcome::Unresolved) {
+    } else if (dossier.outcome == LeadOutcome::UnderSpecified || dossier.outcome == LeadOutcome::Unresolved) {
       ++report.unresolved_leads;
     } else {
       ++report.strong_leads;
     }
     report.stress.leads_tested++;
-    report.stress.oracle_checks += 5;
+    report.stress.oracle_checks += numerical_verification_enabled ? 5 : 0;
     report.stress.counterexample_attempts += dossier.counterexample_attempts;
     report.stress.numerical_resolutions += dossier.numerical_resolutions;
     report.stress.representation_checks += dossier.representations_checked;
     report.stress.rewrite_checks += dossier.rewrites_checked;
-    report.stress.metamorphic_checks += 4;
+    report.stress.metamorphic_checks += numerical_verification_enabled ? 4 : 0;
     report.leads.push_back(std::move(dossier));
   }
 
@@ -309,7 +316,9 @@ ScientificValidationReport ScientificValidator::run(
       "B: higher-level schema is inferred from repeated zero-composition and analogue patterns.",
       "C: controlled projection repair succeeds; open leads remain unresolved.",
       "D: hidden role predictions are generated from meta-patterns but not formally proven.",
-      "E: first failure point is the numerical/counterexample backend and sparse ontology for generalized regimes."};
+      numerical_verification_enabled
+          ? "E: proof-stage numerical/counterexample coverage and sparse ontology limit generalized-regime validation."
+          : "E: structural search stops at incomplete properties, assumptions, and independent lineages; numerics were intentionally not run."};
   return report;
 }
 

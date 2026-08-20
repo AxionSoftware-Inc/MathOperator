@@ -1,1 +1,0 @@
-/usr/bin/c++ -fsanitize=address -fno-omit-frame-pointer -Wl,-search_paths_first -Wl,-headerpad_max_install_names -fsanitize=address CMakeFiles/opforge_tests.dir/tests/atlas_tests.cpp.o -o opforge_tests  libopforge_core.a

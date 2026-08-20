@@ -96,7 +96,8 @@ public:
   ScientificValidationReport run(const atlas::Atlas&, const BaselineSnapshot&,
                                   const synthesis::SchemaDiscoveryReport&, const StructureAnalysisReport&,
                                   const std::vector<ResidualObject>&, const std::vector<ResidualCluster>&,
-                                  const std::vector<std::string>& action_types) const;
+                                  const std::vector<std::string>& action_types,
+                                  bool numerical_verification_enabled = false) const;
   std::string export_text(const ScientificValidationReport&) const;
 };
 

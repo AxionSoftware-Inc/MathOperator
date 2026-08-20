@@ -33,6 +33,13 @@ std::vector<TestCase> canonical_test_cases(unsigned seed, int limit) {
 
 CounterexampleResult CounterexampleSearchEngine::search(const Property& p, const OperatorCandidate& c, const ResourceBudget& b, unsigned seed) const {
   CounterexampleResult out; out.experiment=make_experiment("E-counterexample-"+c.id,c.id,p.id,ExperimentType::CounterexampleSearch,ExperimentStatus::Inconclusive); out.experiment.seed=seed; out.experiment.assumptions=p.assumptions;
+  if (!ready_for_numerical_verification(c)) {
+    out.status=ExperimentStatus::Unsupported;
+    out.reason="candidate completion/proof gate not satisfied";
+    out.experiment.status=out.status;
+    out.experiment.failure_reason=out.reason;
+    return out;
+  }
   if (!p.error_function) { out.status=ExperimentStatus::Unsupported; out.reason="property has no executable error function"; out.experiment.status=out.status; return out; }
   auto cases=canonical_test_cases(seed,std::min(b.max_counterexample_attempts,b.max_test_cases)); if(cases.empty()){out.status=ExperimentStatus::BudgetExhausted;out.reason="counterexample budget exhausted";out.experiment.status=out.status;return out;}
   for (const auto& tc:cases) { const double error=p.error_function(tc); if(error>p.tolerance){out.status=ExperimentStatus::Fail;out.reason="counterexample found: error="+std::to_string(error);out.counterexample=tc;out.experiment.status=out.status;out.experiment.failure_reason=out.reason;return out;} out.experiment.generated_cases.push_back(tc.id); }
@@ -41,6 +48,7 @@ CounterexampleResult CounterexampleSearchEngine::search(const Property& p, const
 
 BenchmarkResult BenchmarkEngine::compare(const OperatorCandidate& c, const OperatorCandidate* baseline, const std::vector<TestCase>& cases, const ResourceBudget& b) const {
   BenchmarkResult result; result.experiment=make_experiment("E-benchmark-"+c.id,c.id,"baseline",ExperimentType::Benchmark,ExperimentStatus::Unsupported);
+  if (!ready_for_numerical_verification(c)) { result.experiment.failure_reason="candidate completion/proof gate not satisfied"; return result; }
   if(!baseline){result.experiment.failure_reason="no baseline";return result;} if(cases.empty()||b.max_test_cases<=0){result.status=ExperimentStatus::BudgetExhausted;result.experiment.status=result.status;return result;}
   numerics::Grid grid{3,8,8,8,.1}; numerics::NumericObject input;
   if(c.signature.input_kind==atlas::ObjectKind::Scalar) input=numerics::scalar_grid(grid,[](double x,double y,double z){return x*x+y*y+z*z;});
@@ -61,6 +69,14 @@ EvaluationReport CandidateEvaluationEngine::evaluate(const Atlas& a, const Opera
   auto structural=infer(c.expression,a); auto structural_exp=make_experiment("E-structural-"+c.id,c.id,"typed AST",ExperimentType::Symbolic,structural.valid?ExperimentStatus::Pass:ExperimentStatus::Fail); report.experiments.push_back(structural_exp);
   if(!structural.valid){report.state=CandidateState::Unknown;report.failure_reason=structural.reason;report.epistemic_status="unknown";return report;} report.scores.structural_fit=1;report.scores.mathematical_validity=1;report.state=CandidateState::StructurallyValid;
   std::string trivial; bool is_triv=is_trivial(c.expression,a,&trivial); auto nontriv=make_experiment("E-nontrivial-"+c.id,c.id,"canonical",ExperimentType::EquivalenceTest,is_triv?ExperimentStatus::Fail:ExperimentStatus::Pass); nontriv.failure_reason=trivial;report.experiments.push_back(nontriv);if(is_triv){report.state=CandidateState::CounterexampleRejected;report.failure_reason=trivial;report.epistemic_status="verified_under_assumptions";return report;}report.scores.non_triviality=1;
+  if (!ready_for_numerical_verification(c)) {
+    report.state = CandidateState::StructurallyValid;
+    report.epistemic_status = "search_only_numeric_verification_blocked";
+    report.failure_reason = c.completion_blockers.empty()
+                                ? "candidate completion/proof gate not satisfied"
+                                : c.completion_blockers.front();
+    return report;
+  }
   int used=2; for(const auto& property:props){ if(used++>=budget.max_experiments){auto e=make_experiment("E-budget-"+c.id,c.id,property.id,ExperimentType::PropertyTest,ExperimentStatus::BudgetExhausted);report.experiments.push_back(e);continue;} auto cases=canonical_test_cases(0,budget.max_test_cases);double max_error=0;for(const auto& tc:cases)if(property.error_function)max_error=std::max(max_error,property.error_function(tc));auto e=make_experiment("E-property-"+c.id+"-"+property.id,c.id,property.id,ExperimentType::PropertyTest,max_error<=property.tolerance?ExperimentStatus::Pass:ExperimentStatus::Fail);e.assumptions=property.assumptions;e.failure_reason=max_error>property.tolerance?"property failed":"";report.experiments.push_back(e);auto counter=CounterexampleSearchEngine{}.search(property,c,budget,0);report.counterexamples.push_back(counter);if(counter.status==ExperimentStatus::Fail){report.state=CandidateState::CounterexampleRejected;report.failure_reason=counter.reason;report.epistemic_status="counterexample_found";return report;}}
   report.scores.identity_consistency=1;report.scores.evidence_strength=.5;report.scores.numerical_stability=.25;report.scores.computational_cost=.25;report.state=CandidateState::NumericallySupported;report.epistemic_status="numerically_supported";
   if(baseline){auto benchmark=BenchmarkEngine{}.compare(c,baseline,canonical_test_cases(0,std::min(5,budget.max_test_cases)),budget);report.benchmarks.push_back(benchmark);if(benchmark.status==ExperimentStatus::Pass)report.state=CandidateState::BenchmarkPromising;report.scores.benchmark_performance=.25;}
